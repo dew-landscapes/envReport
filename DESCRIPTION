@@ -17,5 +17,8 @@ BugReports: https://github.com/Acanthiza/envReport/issues
 Imports: 
     bib2df,
     dplyr,
+    forcats,
+    ggdist,
     knitr,
-    magrittr
+    magrittr,
+    tidyr

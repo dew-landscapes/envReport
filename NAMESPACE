@@ -2,4 +2,5 @@
 
 export("%>%")
 export(cite_package)
+export(make_cluster_pred_plots)
 importFrom(magrittr,"%>%")
