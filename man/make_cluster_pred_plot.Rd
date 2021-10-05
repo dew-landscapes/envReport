@@ -18,6 +18,8 @@ make_cluster_pred_plot(
 
 \item{cluster_colours}{Dataframe mapping classes to colours. This is also used
 to determine how many other classes were in the clustering.}
+
+\item{clust_col}{Name of column in \code{cluster_colours} with the classes.}
 }
 \value{
 
