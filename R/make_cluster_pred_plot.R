@@ -22,7 +22,7 @@ make_cluster_pred_plot <- function(this_clust
   levs <- levels(cluster_colours[clust_col][[1]])
 
   df <- pred_df %>%
-    tidyr::pivot_longer(cluster_colours[clust_col][[1]]
+    tidyr::pivot_longer(any_of(cluster_colours[clust_col][[1]])
                         , names_to = clust_col
                         ) %>%
     #dplyr::filter(value > 0) %>%
