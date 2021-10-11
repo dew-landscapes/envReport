@@ -2,6 +2,7 @@
 
 export("%>%")
 export(cite_package)
+export(data_name_map)
 export(make_cluster_pred_map)
 export(make_cluster_pred_plot)
 export(source_of_field)
