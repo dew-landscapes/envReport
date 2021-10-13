@@ -12,8 +12,8 @@ data_name_map(
   polys = NULL,
   polys_col = NULL,
   polys_name = NULL,
-  polys_palette = viridis::viridis(length(unique(polys[polys_col][[1]]))),
-  aoi,
+  polys_palette = NULL,
+  aoi = NULL,
   in_crs = 4283,
   out_crs = 4326
 )
@@ -35,13 +35,14 @@ data_name_map(
 
 \item{polys_palette}{Vector of column colours to use for \code{polys}.}
 
+\item{aoi}{Object on which \code{sf::st_bbox} will return a bounding box for the
+map output.}
+
 \item{in_crs}{Coordinate reference system of \code{x} and \code{y} in \code{df}. Can be
 given as any coordinate reference system recognised by \code{sf::st_crs} (e.g.
 EPSG code).}
 
 \item{out_crs}{Coordinate reference system of resulting map.}
-
-\item{zoom_to_points}{Logical. Zoom map to the vicinity of points in \code{df}?}
 }
 \value{
 tmap object

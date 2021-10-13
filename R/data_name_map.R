@@ -30,7 +30,7 @@ data_name_map <- function(df
                           , polys = NULL
                           , polys_col = NULL
                           , polys_name = NULL
-                          , polys_palette = viridis::viridis(length(unique(polys[polys_col][[1]])))
+                          , polys_palette = NULL
                           , aoi = NULL
                           , in_crs = 4283
                           , out_crs = 4326
@@ -48,11 +48,11 @@ data_name_map <- function(df
 
   bbox_map <- if(isTRUE(is.null(aoi))) {
 
-    sf::st_bbox(aoi)
+    sf::st_bbox(map_df)
 
   } else {
 
-    sf::st_bbox(map_df)
+    sf::st_bbox(aoi)
 
   }
 
@@ -68,6 +68,12 @@ data_name_map <- function(df
 
   df_data_name <- unique(df$data_name)
 
+  if(isTRUE(is.null(polys_palette))) {
+
+    polys_palette <- viridis::viridis(nrow(polys_data_name))
+
+  }
+
   tmap::tm_shape(polys_data_name
            , bbox = bbox_map
            ) +
@@ -80,10 +86,12 @@ data_name_map <- function(df
                              , names(map_df)
                              , value = TRUE
                              )
+                  , size = 0.75
+                  , alpha = 0.5
                   , title = paste0(df_data_name
                                    , " records"
                                    )
-                  , palette = "viridis"
+                  , palette = "plasma"
                   , legend.format = list(big.mark = "")
                   ) +
     tmap::tm_layout(legend.outside = TRUE
