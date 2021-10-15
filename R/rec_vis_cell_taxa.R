@@ -16,7 +16,7 @@ rec_vis_sit_tax <- function(df
                             ) {
 
   df %>%
-    dplyr::summarise(taxa = n_distinct(!!ensym(taxa_col))
+    dplyr::summarise(taxa = n_distinct(across(any_of(taxa_col)))
                      , records = nrow(.)
                      , visits = n_distinct(across(any_of(site_cols)))
                      , sites = n_distinct(across(any_of(visit_cols)))
