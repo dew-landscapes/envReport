@@ -31,7 +31,7 @@ cite_package <- function(package
                          , startText = ""
                          , endText = ""
                          , pac_df = "refs"
-                         , pac_cite_file = "package_citations.bib"
+                         , pac_cite_file = "packages.bib"
                          ) {
 
   if(!file.exists(pac_cite_file)) {
