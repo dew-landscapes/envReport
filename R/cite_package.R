@@ -40,6 +40,8 @@ cite_package <- function(package
 
     knitr::write_bib(pac,pac_cite_file)
 
+    fix_bib(pac_cite_file)
+
   }
 
   if(!exists(pac_df, envir = globalenv())) {

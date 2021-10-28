@@ -10,7 +10,7 @@ cite_package(
   startText = "",
   endText = "",
   pac_df = "refs",
-  pac_cite_file = "package_citations.bib"
+  pac_cite_file = "packages.bib"
 )
 }
 \arguments{

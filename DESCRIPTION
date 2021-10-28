@@ -22,7 +22,10 @@ Imports:
     ggdist,
     knitr,
     magrittr,
+    purrr,
     sf,
     tidyr,
+    tidyselect,
+    tidytext,
     tmap,
     viridis
