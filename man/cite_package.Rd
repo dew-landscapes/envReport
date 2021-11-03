@@ -2,15 +2,16 @@
 % Please edit documentation in R/cite_package.R
 \name{cite_package}
 \alias{cite_package}
-\title{Cite a package in rmarkdown}
+\title{Cite a package}
 \usage{
 cite_package(
   package,
   brack = TRUE,
   startText = "",
   endText = "",
-  pac_df = "refs",
-  pac_cite_file = "packages.bib"
+  bib_df = "refs",
+  bib_file = "packages.bib",
+  sep = ";"
 )
 }
 \arguments{
@@ -22,27 +23,34 @@ cite_package(
 
 \item{endText}{Character. Text to include after reference.}
 
-\item{pac_df}{Dataframe of package citations, usually read in via
+\item{bib_df}{Dataframe of package citations, usually read in via
 \code{bib2df::bib2df()}}
 
-\item{pac_cite_file}{Name of file in the project root directory containing
-package citations. Usually called \code{package_citations.bib} and created with
+\item{bib_file}{Path to bibliography. Will be created if it doesn't exist.
 \code{knitr::write_bib()}.}
+
+\item{sep}{Character. What character to use to separate more than one
+reference. Defaults to ';' which is needed for rmarkdown.}
 }
 \value{
 Character string with appropriate markdown formatting to insert the
-appropriate reference at that point in the text. If \code{refs} did not exist when
-the function is called, \code{refs} is created in the global environment and
-if \code{package_citations.bib} did not exist it is created in the project root
-directory.
+appropriate reference at that point in the text. If \code{bib_df} did not exist
+when the function is called, \code{bib_df} is created in the global environment
+and if \code{bib_file} did not exist it is created.
 }
 \description{
-Requires that \code{package_citations.bib} exists in the project root directory
-and that the data frame \code{refs} exists
-(where \code{refs <- bib2df::bib2df(package_citations.bib)}). These will be
-created if \code{refs} does not exist when the function is called.
+Default output is rmarkdown format.
+}
+\details{
+\code{bib_df} and \code{bib_file} will be created if they don't currently exist.
 }
 \examples{
-library("dplyr")
-cite_package("dplyr")
+\dontrun{
+library(envReport)
+bib_file = tempfile()
+cite_package("dplyr", bib_file = bib_file)
+refs
+rm(refs)
+unlink(bib_file)
+}
 }

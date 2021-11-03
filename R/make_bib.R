@@ -1,29 +1,39 @@
 #' Make package bibliography, including tweaks for known package issues.
 #'
+#' Makes use of both `knitr::write_bib` \insertCite{`r gsub("@","",envReport::cite_package("knitr", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}
+#' and `bib2df::bib2df` \insertCite{`r gsub("@","",envReport::cite_package("bib2df", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}.
 #' Fixes sentence case applied to package names via `knitr::write_bib` process.
-#' Makes heavy use of `bib2df` package.
 #'
-#' @param bib_file Path to bibliography. If not existing, it will be made.
-#' @param make_key Logical. Generate a new key via author and year? Defaults to
-#' `FALSE`.
+#' @param bib_file Path to bibliography. Will be created if it doesn't exist.
+#' @param make_key Logical. Generate a new key using author and year.
 #' @param is_package_bib Logical. Is this a bibliography of package citations?
 #' Defaults to `TRUE.`
+#' @param pacs Character. Name of any R packages to add to `bib_file`.
 #'
 #' @return Tweaked `bib_file` and data frame of references (from
 #' `bib2df::bib2df`).
+#' @references
+#'   \insertAllCited{}
 #' @export
 #'
 #' @examples
-fix_bib <- function(bib_file = "packages.bib"
+#' \dontrun{
+#' library(envReport)
+#' bib_file <- tempfile()
+#' make_bib(pacs = .packages())
+#' refs
+#' rm(refs)
+#' unlink(bib_file)
+#' }
+make_bib <- function(bib_file = "packages.bib"
                     , make_key = FALSE
                     , is_package_bib = TRUE
+                    , pacs = NULL
                     ) {
 
   if(!file.exists(bib_file)) {
 
-    pac <- .packages()
-
-    knitr::write_bib(pac
+    knitr::write_bib(c(pacs, .packages())
                      , bib_file
                      )
 

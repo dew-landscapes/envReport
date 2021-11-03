@@ -3,7 +3,7 @@
 export("%>%")
 export(cite_package)
 export(data_name_map)
-export(fix_bib)
+export(make_bib)
 export(make_cluster_pred_map)
 export(make_cluster_pred_plot)
 export(rec_vis_sit_tax)

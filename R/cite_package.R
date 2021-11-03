@@ -1,67 +1,130 @@
 
-#' Cite a package in rmarkdown
+#' Cite a package
 #'
-#' Requires that `package_citations.bib` exists in the project root directory
-#' and that the data frame `refs` exists
-#' (where `refs <- bib2df::bib2df(package_citations.bib)`). These will be
-#' created if `refs` does not exist when the function is called.
+#' Default output is rmarkdown format.
+#'
+#' `bib_df` and `bib_file` will be created if they don't currently exist.
 #'
 #' @param package Character. Name of package.
 #' @param brack Logical. If true, include brackets - '('ref')' - in output.
 #' @param startText Character. Text to include before reference.
 #' @param endText Character. Text to include after reference.
-#' @param pac_df Dataframe of package citations, usually read in via
+#' @param bib_df Dataframe of package citations, usually read in via
 #' `bib2df::bib2df()`
-#' @param pac_cite_file Name of file in the project root directory containing
-#' package citations. Usually called `package_citations.bib` and created with
+#' @param bib_file Path to bibliography. Will be created if it doesn't exist.
 #' `knitr::write_bib()`.
+#' @param sep Character. What character to use to separate more than one
+#' reference. Defaults to ';' which is needed for rmarkdown.
 #'
 #' @return Character string with appropriate markdown formatting to insert the
-#' appropriate reference at that point in the text. If `refs` did not exist when
-#' the function is called, `refs` is created in the global environment and
-#' if `package_citations.bib` did not exist it is created in the project root
-#' directory.
+#' appropriate reference at that point in the text. If `bib_df` did not exist
+#' when the function is called, `bib_df` is created in the global environment
+#' and if `bib_file` did not exist it is created.
 #' @export
 #'
 #' @examples
-#' library("dplyr")
-#' cite_package("dplyr")
+#' \dontrun{
+#' library(envReport)
+#' bib_file = tempfile()
+#' cite_package("dplyr", bib_file = bib_file)
+#' refs
+#' rm(refs)
+#' unlink(bib_file)
+#' }
 cite_package <- function(package
                          , brack = TRUE
                          , startText = ""
                          , endText = ""
-                         , pac_df = "refs"
-                         , pac_cite_file = "packages.bib"
+                         , bib_df = "refs"
+                         , bib_file = "packages.bib"
+                         , sep = ";"
                          ) {
 
-  if(!file.exists(pac_cite_file)) {
+  if(!file.exists(bib_file)) {
 
-    pac <- .packages()
+    pacs <- c(package
+             , .packages()
+             )
 
-    knitr::write_bib(pac,pac_cite_file)
+    fs::dir_create(dirname(bib_file))
 
-    fix_bib(pac_cite_file)
+    knitr::write_bib(pacs
+                     , bib_file
+                     )
+
+    envReport::make_bib(bib_file)
 
   }
 
-  if(!exists(pac_df, envir = globalenv())) {
+  if(!exists(bib_df, envir = globalenv())) {
 
-    refs <- bib2df::bib2df(pac_cite_file)
+    refs <- bib2df::bib2df(bib_file)
 
-    assign("refs",refs,envir = globalenv())
+    assign("refs"
+           , refs
+           , envir = globalenv()
+           )
 
     }
 
-  thisRef <- refs %>%
-    dplyr::filter(grepl(paste0("-",package),BIBTEXKEY) | grepl(paste0("^",package),BIBTEXKEY)) %>%
+  check_refs <- refs %>%
+    dplyr::filter(grepl(paste0("-",package
+                               , collapse = "|"
+                               )
+                        , BIBTEXKEY
+                        )
+                  ) %>%
     dplyr::pull(BIBTEXKEY)
+
+  if(length(check_refs) != length(package)) {
+
+    already_done <- refs %>%
+      dplyr::filter(grepl("R-", BIBTEXKEY)) %>%
+      dplyr::pull(BIBTEXKEY) %>%
+      gsub("R-", "", .)
+
+    pacs <- c(package, already_done) %>%
+      unique() %>%
+      sort()
+
+    fs::dir_create(dirname(bib_file))
+
+    knitr::write_bib(pacs
+                     , bib_file
+                     )
+
+    envReport::make_bib(bib_file)
+
+    refs <- bib2df::bib2df(bib_file)
+
+    assign("refs"
+           , refs
+           , envir = globalenv()
+           )
+
+  }
+
+  thisRef <- refs %>%
+      dplyr::filter(grepl(paste0("-",package
+                                 , collapse = "|"
+                                 )
+                          , BIBTEXKEY
+                          ) |
+                      grepl(paste0("^"
+                                   , package
+                                   , collapse = "|"
+                                   )
+                            , BIBTEXKEY
+                            )
+                    ) %>%
+      dplyr::pull(BIBTEXKEY)
 
   starts <- if(brack) paste0("[",startText,"@") else paste0(startText,"@")
   ends <- if(brack) paste0(endText,"]") else endText
 
   if(length(thisRef) > 1) {
 
-    paste0(starts,paste0(thisRef,collapse = "; @"),ends)
+    paste0(starts, thisRef, ends, collapse = sep)
 
   } else {
 

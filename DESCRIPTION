@@ -19,13 +19,16 @@ Imports:
     dplyr,
     envFunc,
     forcats,
+    fs,
     ggdist,
     knitr,
     magrittr,
     purrr,
+    Rdpack,
     sf,
     tidyr,
     tidyselect,
     tidytext,
     tmap,
     viridis
+RdMacros: Rdpack
