@@ -1,8 +1,7 @@
 #' Make package bibliography, including tweaks for known package issues.
 #'
-#' Makes use of both `knitr::write_bib` \insertCite{`r gsub("@","",envReport::cite_package("knitr", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}
-#' and `bib2df::bib2df` \insertCite{`r gsub("@","",envReport::cite_package("bib2df", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}.
-#' Fixes sentence case applied to package names via `knitr::write_bib` process.
+#' Makes use of both [knitr::write_bib()] \insertCite{`r gsub("@","",envReport::cite_package("knitr", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}
+#' and [bib2df::bib2df()] \insertCite{`r gsub("@","",envReport::cite_package("bib2df", brack = FALSE, sep = ",", bib_file = "inst/REFERENCES.bib"))`}{envReport}.
 #'
 #' @param bib_file Path to bibliography. Will be created if it doesn't exist.
 #' @param make_key Logical. Generate a new key using author and year.
