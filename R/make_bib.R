@@ -82,6 +82,10 @@ make_bib <- function(bib_file = "packages.bib"
                                   , ""
                                   , AUTHOR
                                   )
+                  , AUTHOR = gsub("\\{|\\}"
+                                  , ""
+                                  , AUTHOR
+                                  )
                   , YEAR = substr(YEAR,1,4)
                   ) %>%
     {if(make_key) (.) %>%
