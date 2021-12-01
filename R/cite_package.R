@@ -116,17 +116,9 @@ cite_package <- function(package
                     ) %>%
       dplyr::pull(BIBTEXKEY)
 
-  starts <- if(brack) paste0("[",startText,"@") else paste0(startText,"@")
+  starts <- if(brack) paste0("[",startText) else startText
   ends <- if(brack) paste0(endText,"]") else endText
 
-  if(length(thisRef) > 1) {
-
-    paste0(starts, thisRef, ends, collapse = sep)
-
-  } else {
-
-    paste0(starts,"R-",package,ends)
-
-  }
+  paste0(starts, paste0("@", thisRef, collapse = sep), ends)
 
 }
