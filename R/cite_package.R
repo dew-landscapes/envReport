@@ -52,8 +52,6 @@ cite_package <- function(package
                      , bib_file
                      )
 
-    envReport::make_bib(bib_file)
-
   }
 
   if(!exists(bib_df, envir = globalenv())) {
@@ -68,7 +66,8 @@ cite_package <- function(package
     }
 
   check_refs <- refs %>%
-    dplyr::filter(grepl(paste0("-",package
+    dplyr::filter(grepl(paste0("-"
+                               , package
                                , collapse = "|"
                                )
                         , BIBTEXKEY
@@ -92,8 +91,6 @@ cite_package <- function(package
     knitr::write_bib(pacs
                      , bib_file
                      )
-
-    envReport::make_bib(bib_file)
 
     refs <- bib2df::bib2df(bib_file)
 
