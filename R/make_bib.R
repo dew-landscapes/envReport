@@ -32,7 +32,9 @@ make_bib <- function(bib_file = "packages.bib"
 
   if(!file.exists(bib_file)) {
 
-    knitr::write_bib(c(pacs, .packages())
+    knitr::write_bib(c(pacs
+                       , .packages()
+                       )
                      , bib_file
                      )
 
@@ -76,7 +78,7 @@ make_bib <- function(bib_file = "packages.bib"
                                   , " "
                                   , AUTHOR
                                   )
-                  , AUTHOR = gsub("\\}.*"
+                  , AUTHOR = gsub("\\{|\\}"
                                   , ""
                                   , AUTHOR
                                   )
