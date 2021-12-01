@@ -28,7 +28,6 @@ Tweaked \code{bib_file} and data frame of references (from
 \description{
 Makes use of both \code{\link[knitr:write_bib]{knitr::write_bib()}} \insertCite{R-knitr,knitr2015,knitr2014}{envReport}
 and \code{\link[bib2df:bib2df]{bib2df::bib2df()}} \insertCite{R-bib2df}{envReport}.
-Fixes sentence case applied to package names via \code{knitr::write_bib} process.
 }
 \examples{
 \dontrun{

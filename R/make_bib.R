@@ -60,10 +60,26 @@ make_bib <- function(bib_file = "packages.bib"
                   ) %>%
     tidyr::nest(data = c(titleWords,isCap)) %>%
     dplyr::mutate(TITLE = purrr::map_chr(data,. %>% dplyr::pull(titleWords) %>% paste0(collapse = " "))
-                  , AUTHOR = purrr::map(AUTHOR,~gsub("Microsoft Corporation","{Microsoft Corporation}",.))
-                  , AUTHOR = purrr::map(AUTHOR,~gsub("Fortran original by |R port by ","",.))
-                  , AUTHOR = purrr::map(AUTHOR, ~gsub("with contributions by","and",.))
-                  , AUTHOR = purrr::map(AUTHOR, ~gsub("Â "," ",.))
+                  , AUTHOR = gsub("Microsoft Corporation"
+                                  , "{Microsoft Corporation}"
+                                  , AUTHOR
+                                  )
+                  , AUTHOR = gsub("Fortran original by |R port by "
+                                  , ""
+                                  , AUTHOR
+                                  )
+                  , AUTHOR = gsub("with contributions by"
+                                  , "and"
+                                  , AUTHOR
+                                  )
+                  , AUTHOR = gsub("Â "
+                                  , " "
+                                  , AUTHOR
+                                  )
+                  , AUTHOR = gsub("\\(R-SIG-DB\\)\\})"
+                                  , "(R-SIG-DB)"
+                                  , AUTHOR
+                                  )
                   , YEAR = substr(YEAR,1,4)
                   ) %>%
     {if(make_key) (.) %>%
