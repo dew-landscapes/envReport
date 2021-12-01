@@ -76,8 +76,8 @@ make_bib <- function(bib_file = "packages.bib"
                                   , " "
                                   , AUTHOR
                                   )
-                  , AUTHOR = gsub("\\(R-SIG-DB\\)\\})"
-                                  , "(R-SIG-DB)"
+                  , AUTHOR = gsub("\\}.*"
+                                  , ""
                                   , AUTHOR
                                   )
                   , YEAR = substr(YEAR,1,4)
