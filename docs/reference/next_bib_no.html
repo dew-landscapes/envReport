@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Make package bibliography, including tweaks for known package issues. — make_bib • envReport</title>
+<title>Get the next bibliography number to use — next_bib_no • envReport</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,8 @@
 
 
 
-<meta property="og:title" content="Make package bibliography, including tweaks for known package issues. — make_bib" />
-<meta property="og:description" content="Makes use of both knitr::write_bib() (Xie 2021, 2015)
-
-and bib2df::bib2df() (Ottolinger 2019)
-." />
+<meta property="og:title" content="Get the next bibliography number to use — next_bib_no" />
+<meta property="og:description" content="Assumes a bibliography with sequential, integer reference IDs." />
 
 
 
@@ -111,76 +108,30 @@ and bib2df::bib2df() (Ottolinger 2019)
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Make package bibliography, including tweaks for known package issues.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Acanthiza/envReport/blob/master/R/make_bib.R'><code>R/make_bib.R</code></a></small>
-    <div class="hidden name"><code>make_bib.Rd</code></div>
+    <h1>Get the next bibliography number to use</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Acanthiza/envReport/blob/master/R/next_bib_no.R'><code>R/next_bib_no.R</code></a></small>
+    <div class="hidden name"><code>next_bib_no.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Makes use of both <code><a href='https://rdrr.io/pkg/knitr/man/write_bib.html'>knitr::write_bib()</a></code> (Xie 2021, 2015)
-
-and <code><a href='https://docs.ropensci.org/bib2df/reference/bib2df.html'>bib2df::bib2df()</a></code> (Ottolinger 2019)
-.</p>
+    <p>Assumes a bibliography with sequential, integer reference IDs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>make_bib</span><span class='op'>(</span>
-  bib_file <span class='op'>=</span> <span class='st'>"packages.bib"</span>,
-  make_key <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  is_package_bib <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  pacs <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>next_bib_no</span><span class='op'>(</span>bib_path <span class='op'>=</span> <span class='st'>"common/refs.bib"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>bib_file</th>
-      <td><p>Path to bibliography. Will be created if it doesn't exist.</p></td>
-    </tr>
-    <tr>
-      <th>make_key</th>
-      <td><p>Logical. Generate a new key using author and year.</p></td>
-    </tr>
-    <tr>
-      <th>is_package_bib</th>
-      <td><p>Logical. Is this a bibliography of package citations?
-Defaults to <code>TRUE.</code></p></td>
-    </tr>
-    <tr>
-      <th>pacs</th>
-      <td><p>Character. Name of any R packages to add to <code>bib_file</code>.</p></td>
+      <th>bib_path</th>
+      <td><p>Character. Path to bibliography.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Tweaked <code>bib_file</code> and data frame of references (from
-<code><a href='https://docs.ropensci.org/bib2df/reference/bib2df.html'>bib2df::bib2df</a></code>).</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <p>Integer. Number to use as the next ID in bibliography <code>bib_path</code>.</p>
 
-    <p>Ottolinger P (2019).
-<em>bib2df: Parse a BibTeX File to a Data Frame</em>.
-R package version 1.1.1, <a href='https://github.com/ropensci/bib2df'>https://github.com/ropensci/bib2df</a>.<br /><br /> Xie Y (2014).
-&#8220;knitr: A Comprehensive Tool for Reproducible Research in R.&#8221;
-In Stodden V, Leisch F, Peng RD (eds.), <em>Implementing Reproducible Computational Research</em>.
-Chapman and Hall/CRC.
-ISBN 978-1466561595, <a href='http://www.crcpress.com/product/isbn/9781466561595'>http://www.crcpress.com/product/isbn/9781466561595</a>.<br /><br /> Xie Y (2015).
-<em>Dynamic Documents with R and knitr</em>, 2nd edition.
-Chapman and Hall/CRC, Boca Raton, Florida.
-ISBN 978-1498716963, <a href='https://yihui.org/knitr/'>https://yihui.org/knitr/</a>.<br /><br /> Xie Y (2021).
-<em>knitr: A General-Purpose Package for Dynamic Report Generation in R</em>.
-R package version 1.33, <a href='https://yihui.org/knitr/'>https://yihui.org/knitr/</a>.</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
-<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/Acanthiza/envReport'>envReport</a></span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>bib_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>make_bib</span><span class='op'>(</span>pacs <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/zpackages.html'>.packages</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>refs</span></span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/rm.html'>rm</a></span><span class='op'>(</span><span class='va'>refs</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>bib_file</span><span class='op'>)</span></span>
-<span class='r-in'><span class='op'>}</span></span>
-</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
