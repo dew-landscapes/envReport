@@ -18,6 +18,8 @@
 #' given as any coordinate reference system recognised by `sf::st_crs` (e.g.
 #' EPSG code).
 #' @param out_crs Coordinate reference system of resulting map.
+#' @param ... `tmap::tm_dots` arguments. Note `col`, `title`, `palette` and
+#' `legend.format` are already defined within `data_name_map`
 #'
 #' @return tmap object
 #' @export
@@ -34,6 +36,7 @@ data_name_map <- function(df
                           , aoi = NULL
                           , in_crs = 4283
                           , out_crs = 4326
+                          , ...
                           ) {
 
   map_df <- df %>%
@@ -86,13 +89,12 @@ data_name_map <- function(df
                              , names(map_df)
                              , value = TRUE
                              )
-                  , size = 0.75
-                  , alpha = 0.5
                   , title = paste0(df_data_name
                                    , " records"
                                    )
                   , palette = "plasma"
                   , legend.format = list(big.mark = "")
+                  , ...
                   ) +
     tmap::tm_layout(legend.outside = TRUE
                     , legend.outside.position = "left"

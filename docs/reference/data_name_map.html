@@ -128,7 +128,8 @@
   polys_palette <span class='op'>=</span> <span class='cn'>NULL</span>,
   aoi <span class='op'>=</span> <span class='cn'>NULL</span>,
   in_crs <span class='op'>=</span> <span class='fl'>4283</span>,
-  out_crs <span class='op'>=</span> <span class='fl'>4326</span>
+  out_crs <span class='op'>=</span> <span class='fl'>4326</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -180,6 +181,11 @@ EPSG code).</p></td>
     <tr>
       <th>out_crs</th>
       <td><p>Coordinate reference system of resulting map.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p><code><a href='https://rdrr.io/pkg/tmap/man/tm_symbols.html'>tmap::tm_dots</a></code> arguments. Note <code>col</code>, <code>title</code>, <code>palette</code> and
+<code>legend.format</code> are already defined within <code>data_name_map</code></p></td>
     </tr>
     </table>
 

@@ -15,7 +15,8 @@ data_name_map(
   polys_palette = NULL,
   aoi = NULL,
   in_crs = 4283,
-  out_crs = 4326
+  out_crs = 4326,
+  ...
 )
 }
 \arguments{
@@ -43,6 +44,9 @@ given as any coordinate reference system recognised by \code{sf::st_crs} (e.g.
 EPSG code).}
 
 \item{out_crs}{Coordinate reference system of resulting map.}
+
+\item{...}{\code{tmap::tm_dots} arguments. Note \code{col}, \code{title}, \code{palette} and
+\code{legend.format} are already defined within \code{data_name_map}}
 }
 \value{
 tmap object
