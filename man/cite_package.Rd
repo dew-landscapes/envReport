@@ -10,7 +10,7 @@ cite_package(
   startText = "",
   endText = "",
   bib_df = "refs",
-  bib_file = "packages.bib",
+  bib_file = fs::path(here::here(), regexp = "packages.bib"),
   sep = ";"
 )
 }

@@ -36,7 +36,7 @@ cite_package <- function(package
                          , startText = ""
                          , endText = ""
                          , bib_df = "refs"
-                         , bib_file = "packages.bib"
+                         , bib_file = fs::path(here::here(), regexp = "packages.bib")
                          , sep = ";"
                          ) {
 
@@ -48,19 +48,18 @@ cite_package <- function(package
 
     fs::dir_create(dirname(bib_file))
 
-    knitr::write_bib(pacs
+    knitr::write_bib(sort(unique(pacs))
                      , bib_file
                      )
 
   }
 
-  if(!exists(bib_df, envir = globalenv())) {
+  if(!exists(bib_df)) {
 
     refs <- bib2df::bib2df(bib_file)
 
     assign("refs"
            , refs
-           , envir = globalenv()
            )
 
     }
@@ -96,7 +95,6 @@ cite_package <- function(package
 
     assign("refs"
            , refs
-           , envir = globalenv()
            )
 
   }
