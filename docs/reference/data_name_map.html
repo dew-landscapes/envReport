@@ -121,15 +121,16 @@
   <span class='va'>df</span>,
   x <span class='op'>=</span> <span class='st'>"long"</span>,
   y <span class='op'>=</span> <span class='st'>"lat"</span>,
-  map_class <span class='op'>=</span> <span class='cn'>NULL</span>,
   polys <span class='op'>=</span> <span class='cn'>NULL</span>,
   polys_col <span class='op'>=</span> <span class='cn'>NULL</span>,
   polys_name <span class='op'>=</span> <span class='cn'>NULL</span>,
   polys_palette <span class='op'>=</span> <span class='cn'>NULL</span>,
+  polys_alpha <span class='op'>=</span> <span class='fl'>1</span>,
   aoi <span class='op'>=</span> <span class='cn'>NULL</span>,
   in_crs <span class='op'>=</span> <span class='fl'>4283</span>,
   out_crs <span class='op'>=</span> <span class='fl'>4326</span>,
-  <span class='va'>...</span>
+  dots_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  layout_args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -148,10 +149,6 @@
       <td><p>Character name of column with Y coordinates (e.g. "lat").</p></td>
     </tr>
     <tr>
-      <th>map_class</th>
-      <td><p>Optional character name of column to include in map legend.</p></td>
-    </tr>
-    <tr>
       <th>polys</th>
       <td><p>Simple feature with polygons to map points on.</p></td>
     </tr>
@@ -166,6 +163,10 @@
     <tr>
       <th>polys_palette</th>
       <td><p>Vector of column colours to use for <code>polys</code>.</p></td>
+    </tr>
+    <tr>
+      <th>polys_alpha</th>
+      <td><p>Passed to <code><a href='https://rdrr.io/pkg/tmap/man/tm_polygons.html'>tmap::tm_polygons()</a></code> <code>alpha</code> argument.</p></td>
     </tr>
     <tr>
       <th>aoi</th>
@@ -183,9 +184,12 @@ EPSG code).</p></td>
       <td><p>Coordinate reference system of resulting map.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p><code><a href='https://rdrr.io/pkg/tmap/man/tm_symbols.html'>tmap::tm_dots</a></code> arguments. Note <code>col</code>, <code>title</code>, <code>palette</code> and
-<code>legend.format</code> are already defined within <code>data_name_map</code></p></td>
+      <th>dots_args</th>
+      <td><p>Named list of arguments to pass to <code><a href='https://rdrr.io/pkg/tmap/man/tm_symbols.html'>tmap::tm_dots()</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>layout_args</th>
+      <td><p>Named list of arguments to pass to <code><a href='https://rdrr.io/pkg/tmap/man/tm_layout.html'>tmap::tm_layout()</a></code>.</p></td>
     </tr>
     </table>
 

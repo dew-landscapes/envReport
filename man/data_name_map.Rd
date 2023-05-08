@@ -8,15 +8,16 @@ data_name_map(
   df,
   x = "long",
   y = "lat",
-  map_class = NULL,
   polys = NULL,
   polys_col = NULL,
   polys_name = NULL,
   polys_palette = NULL,
+  polys_alpha = 1,
   aoi = NULL,
   in_crs = 4283,
   out_crs = 4326,
-  ...
+  dots_args = list(),
+  layout_args = list()
 )
 }
 \arguments{
@@ -26,8 +27,6 @@ data_name_map(
 
 \item{y}{Character name of column with Y coordinates (e.g. "lat").}
 
-\item{map_class}{Optional character name of column to include in map legend.}
-
 \item{polys}{Simple feature with polygons to map points on.}
 
 \item{polys_col}{Column in \code{polys} to include in map legend.}
@@ -35,6 +34,8 @@ data_name_map(
 \item{polys_name}{Character name to give to \code{polys} legend title.}
 
 \item{polys_palette}{Vector of column colours to use for \code{polys}.}
+
+\item{polys_alpha}{Passed to \code{tmap::tm_polygons()} \code{alpha} argument.}
 
 \item{aoi}{Object on which \code{sf::st_bbox} will return a bounding box for the
 map output.}
@@ -45,8 +46,9 @@ EPSG code).}
 
 \item{out_crs}{Coordinate reference system of resulting map.}
 
-\item{...}{\code{tmap::tm_dots} arguments. Note \code{col}, \code{title}, \code{palette} and
-\code{legend.format} are already defined within \code{data_name_map}}
+\item{dots_args}{Named list of arguments to pass to \code{tmap::tm_dots()}.}
+
+\item{layout_args}{Named list of arguments to pass to \code{tmap::tm_layout()}.}
 }
 \value{
 tmap object
