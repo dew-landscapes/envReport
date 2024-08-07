@@ -2,12 +2,19 @@ Package: envReport
 Title: Help To Write Environmental Science Reports
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Nigel",
+    c(person(given = "Nigel",
            family = "Willoughby",
            role = c("aut", "cre"),
-           email = "nigel.willoughby@sa.gov.au")
-Description: What the package does (one paragraph).
-License: GPL (>= 3)
+           email = "nigel.willoughby@sa.gov.au"
+           )
+      , person(given = "Simeon",
+           family = "Zylinski",
+           role = c("aut"),
+           email = "simeon.zylinski@sa.gov.au"
+           )
+      )  
+Description: Help with writing rmarkdown reports based on env packages.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
