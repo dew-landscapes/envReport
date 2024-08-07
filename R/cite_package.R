@@ -36,7 +36,7 @@ cite_package <- function(package
                          , startText = ""
                          , endText = ""
                          , bib_df = "refs"
-                         , bib_file = here::here("packages.bib")
+                         , bib_file = here::here("report", "packages.bib")
                          , sep = ";"
                          ) {
 

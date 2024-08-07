@@ -58,7 +58,15 @@ data_name_map <- function(df
 
   } else {
 
-    sf::st_bbox(aoi)
+    if(!"bbox" %in% class(aoi)) {
+
+      sf::st_bbox(aoi)
+
+    } else {
+
+      aoi
+
+    }
 
   }
 
@@ -82,20 +90,20 @@ data_name_map <- function(df
                  , if(!"col" %in% names(dots_args)) list(col = "records")
                  )
 
+  tmap::tm_shape(polys_data_name) +
+    tmap::tm_polygons(col = if(is.null(polys_col)) NA else polys_col
+                      , palette = polys_palette
+                      , title = if(is.null(polys_name)) NA else polys_name
+                      , alpha = polys_alpha
+                      ) +
   tmap::tm_shape(map_df
                  , bbox = bbox_map
                  ) +
-      do.call(tmap::tm_dots
-              , dots_args
-              ) +
-    tmap::tm_shape(polys_data_name) +
-      tmap::tm_polygons(col = polys_col
-                        , palette = polys_palette
-                        , title = polys_name
-                        , alpha = polys_alpha
-                        ) +
-    do.call(tmap::tm_layout
-            , layout_args
-            )
+    do.call(tmap::tm_dots
+            , dots_args
+            ) +
+  do.call(tmap::tm_layout
+          , layout_args
+          )
 
 }
