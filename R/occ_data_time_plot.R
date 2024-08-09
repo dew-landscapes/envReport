@@ -16,17 +16,17 @@ occ_data_time_plot <- function(df,
 ) {
 
   #parse date
-  if(!class(df[, names(df) %in% year_col]) %in% c("integer", "numeric")) {
+  if(class(df[[year_col]]) %in% c("integer", "numeric")) {
 
     df <- df %>%
       dplyr::mutate(use_year = !!rlang::ensym(year_col))
 
-  } else if(class(df[, names(df) %in% year_col]) %in% "Date") {
+  } else if(class(df[[year_col]]) %in% "Date") {
 
     df <- df %>%
       dplyr::mutate(use_year = lubridate::year(!!rlang::ensym(year_col)))
 
-  } else if(class(df[, names(df) %in% year_col]) %in% "character") {
+  } else if(class(df[[year_col]]) %in% "character") {
 
     df <- df %>%
       dplyr::mutate(use_year = lubridate::year(as.Date(df$date_char,
