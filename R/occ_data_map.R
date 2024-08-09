@@ -19,8 +19,10 @@
 #' @param bin_method How to bin locations, if bin==TRUE. One of "round" (to round coords; faster but less granular) or
 #' "cell" (to bin by raster cells; slower but more specific).
 #' @param bin_size Integer. Either number of decimal places to round coords to, or cell resolution (in m).
+#' @param aoi_args Named list of additional aesthetics to send to tmap::tm_polygons. Default is black border with linewidth=2.
+#' @param aoi_name Character. Name of aoi (if using) to add to legend
 #'
-#' @return tmap object
+#' @return tmap object. Additional layers or map parameters can be added using `occ_data_map(df) + tmap::tm_blah()`
 #' @export
 #'
 #'
@@ -33,10 +35,12 @@ occ_data_map <- function(df,
                          in_crs = 4326,
                          out_crs = 4326,
                          min_year = 1950,
-                         title_prefix = NULL, #name to add to records legend "records" title i.e "title_prefix records"
+                         title_prefix = NULL,
                          bin = FALSE,
                          bin_method = NULL,
-                         bin_size = NULL
+                         bin_size = NULL,
+                         aoi_args = list(),
+                         aoi_name
 ){
 
   #arg checks
@@ -104,7 +108,7 @@ occ_data_map <- function(df,
                                             crs_df = 8059)
 
       df <- df_cell %>%
-        distinct(cell, year, .keep_all = TRUE)
+        dplyr::distinct(cell, year, .keep_all = TRUE)
 
       bin_title <- paste0("binned to ", bin_size, "-m cells")
     }
@@ -152,26 +156,50 @@ occ_data_map <- function(df,
                                               format(Sys.Date(), "%Y"))
   )
 
-  m <- tm_shape(sf::st_as_sf(df
-                             , coords = c(x, y)
-                             , crs = out_crs)) +
-    tm_dots(title = paste(title_prefix, "records")
-            , col = "year"
-            , legend.format = list(big.mark = "")
-            , palette = "viridis"
-            , style = "fixed"
-            , breaks = breaks
-            , labels = labels
-    ) +
-    tm_shape(aoi) +
-    tm_borders() +
-    tm_layout(legend.outside = TRUE)
+
+
+
+  ##do map
+  m <- tmap::tm_shape(sf::st_as_sf(df,
+                                   coords = c(x, y),
+                                   crs = out_crs),
+                      bbox = box) +
+    tmap::tm_grid(lines = FALSE,
+                  projection = out_crs) +
+    tmap::tm_dots(title = paste(title_prefix, "records"),
+                  col = "year",
+                  legend.format = list(big.mark = ""),
+                  palette = "viridis",
+                  style = "fixed",
+                  breaks = breaks,
+                  labels = labels
+                  )
+
+  if(!is.null(aoi)){
+    aoi_args <- c(aoi_args,
+                  alpha = 0,
+                  border.col = "black",
+                  lwd = 2)
+
+    aoi_args_use <- aoi_args[!duplicated(names(aoi_args))]
+
+    m <- m +
+      tmap::tm_shape(aoi) +
+      do.call(tmap::tm_polygons,
+              aoi_args_use) +
+      do.call(tmap::tm_add_legend,
+              c(type = "fill",
+                title = aoi_name,
+                aoi_args_use))
+    }
+
+   m <- m + tmap::tm_layout(legend.outside = TRUE)
 
   if(bin){
-    m <- m + tm_layout(title = paste0("* data points ", bin_title, "\n to reduce overlap and file size")
-                       , title.size = 0.6
-                       , title.position = c( "LEFT", "BOTTOM"))
-  }
+    m <- m + tmap::tm_layout(title = paste0("* data points ", bin_title, "\n to reduce overlap and file size"),
+                             title.size = 0.6,
+                             title.position = c( "LEFT", "BOTTOM"))
+    }
 
   return(m)
 
