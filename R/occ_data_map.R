@@ -1,5 +1,5 @@
 #' Map points from a data frame with coordinates and display them binned by decade. Also includes
-#' option to bin points to speed up drawing of large datasets. Alternative to data_name_map.
+#' option to bin points spatially to speed up drawing of large datasets. Alternative to data_name_map.
 #'
 #'
 #' @param df Dataframe with (at least) coordinate and year columns.
@@ -14,16 +14,16 @@
 #' @param out_crs Coordinate reference system of resulting map.
 #' @param min_year Minimum year for dots breaks. Useful for datasets with long temporal tails eg gbif that
 #' otherwise results in very long legends.
-#' @param title_prefix Name to add to records legend "records" title i.e "title_prefix records" description.
+#' @param title_prefix Name to add to records legend title i.e "title_prefix records" .
 #' @param bin Logical to bin by x/y/year. Recommended for large datasets to reduce data overlap, write time, and memory use.
 #' @param bin_method How to bin locations, if bin==TRUE. One of "round" (to round coords; faster but less granular) or
-#' "cell" (to bin by raster cells; slower but more options)
-#' @param bin_size #Integer. Either cell resolution (in m) or number of decimal places to round coords to. CRS-agnostic.
+#' "cell" (to bin by raster cells; slower but more specific).
+#' @param bin_size Integer. Either number of decimal places to round coords to, or cell resolution (in m).
 #'
 #' @return tmap object
 #' @export
 #'
-#' @examples
+#'
 
 occ_data_map <- function(df,
                          x = "long",

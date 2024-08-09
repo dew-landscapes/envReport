@@ -7,28 +7,29 @@
 #' @param minyear Integer. Records before this year will be lumped into one bar labelled 'pre-minyear'. Useful for datasets with very long temporal tails eg gbif
 #'
 #' @return ggplot2 object
+#' @export
 
 occ_data_time_plot <- function(df,
                                year_col = "year",
                                date_format,
                                minyear = NULL
-                               ) {
+) {
 
   #parse date
   if(!class(df[, names(df) %in% year_col]) %in% c("integer", "numeric")) {
 
     df <- df %>%
-      mutate(use_year = !!rlang::ensym(year_col))
+      dplyr::mutate(use_year = !!rlang::ensym(year_col))
 
   } else if(class(df[, names(df) %in% year_col]) %in% "Date") {
 
     df <- df %>%
-      mutate(use_year = lubridate::year(!!rlang::ensym(year_col)))
+      dplyr::mutate(use_year = lubridate::year(!!rlang::ensym(year_col)))
 
   } else if(class(df[, names(df) %in% year_col]) %in% "character") {
 
     df <- df %>%
-      mutate(use_year = lubridate::year(as.Date(df$date_char,
+      dplyr::mutate(use_year = lubridate::year(as.Date(df$date_char,
                                                 format = date_format)))
   }
 
