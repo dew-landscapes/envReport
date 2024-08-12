@@ -17,7 +17,9 @@ occ_data_map(
   title_prefix = NULL,
   bin = FALSE,
   bin_method = NULL,
-  bin_size = NULL
+  bin_size = NULL,
+  aoi_args = list(),
+  aoi_name
 )
 }
 \arguments{
@@ -49,9 +51,13 @@ otherwise results in very long legends.}
 "cell" (to bin by raster cells; slower but more specific).}
 
 \item{bin_size}{Integer. Either number of decimal places to round coords to, or cell resolution (in m).}
+
+\item{aoi_args}{Named list of additional aesthetics to send to tmap::tm_polygons. Default is black border with linewidth=2.}
+
+\item{aoi_name}{Character. Name of aoi (if using) to add to legend}
 }
 \value{
-tmap object
+tmap object. Additional layers or map parameters can be added using \code{occ_data_map(df) + tmap::tm_blah()}
 }
 \description{
 Map points from a data frame with coordinates and display them binned by decade. Also includes
