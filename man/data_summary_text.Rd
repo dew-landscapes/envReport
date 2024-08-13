@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_summary_text.R
 \name{data_summary_text}
 \alias{data_summary_text}
-\title{Produce a histogram of points over time from a data frame of occurrences}
+\title{Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.}
 \usage{
 data_summary_text(
   df,
@@ -24,5 +24,5 @@ data_summary_text(
 Text paragraph/s including formatting for markdown
 }
 \description{
-Produce a histogram of points over time from a data frame of occurrences
+Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.
 }

@@ -1,5 +1,5 @@
 
-#' Produce a histogram of points over time from a data frame of occurrences
+#' Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.
 #'
 #' @param df Data frame of occurrence records, e.g. as made by envImport. Needs aligned attribute names.
 #' @param site_cols Character vector. Name of columns defining a site. E.g. lat/long, other coordinates, or raster cell ID.
@@ -222,7 +222,7 @@ data_summary_text <- function(df
       dplyr::mutate(text = paste0(per
                                   , "% had a "
                                   , colName
-                                  , "recorded")
+                                  , " recorded")
       )
 
     paste0(" \n\nOf the "
@@ -232,7 +232,7 @@ data_summary_text <- function(df
              paste0("none had a "
                     , envFunc::vec_to_sentence(visitsCols$colName, end = "or")
                     , " recorded")
-           } else paste(envFunc::vec_to_sentence(visits_df))
+           } else paste(envFunc::vec_to_sentence(visits_df$text))
            , "."
     )
 
