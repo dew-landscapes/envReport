@@ -3,7 +3,9 @@
 #'
 #' @param df Data frame of occurrence records, e.g. as made by envImport. Needs aligned attribute names.
 #' @param site_cols Character vector. Name of columns defining a site. E.g. lat/long, other coordinates, or raster cell ID.
-#' @param visit_cols Character vector. Name of columns defining a visit i.e. site plus timestamp. E.g. coordinates/cell plus date/year
+#' @param visit_cols Character vector. Name of columns defining a visit, usually
+#'   site (e.g. coordinates/cell) plus timestamp (e.g. date/year), but could
+#'   also include others such as a site name or spatial reliability
 #' @param data_name How to refer to the dataset, usually a dataset name (e.g "BDBSA", "TERN", "Other"). Only used to paste as text
 #'
 #' @return Text paragraph/s including formatting for markdown
@@ -190,53 +192,45 @@ data_summary_text <- function(df
   }
 
   #visits
-  visitsCols <- tibble::tribble(
+  visitsCols_ <- tibble::tribble(
     ~col, ~colName
     , "rel_metres", "spatial accuracy estimate"
   )
 
-  #count records by visit
+  #visits & spatial accuracy
   visitsYear <- df %>%
-    dplyr::count(dplyr::across(dplyr::all_of(c("year", "month")))
-                 , dplyr::across(dplyr::any_of(visitsCols$col))
-                 , lat
-                 , long
+    dplyr::count(dplyr::across(dplyr::any_of(visit_cols))
                  , name = "richness"
     )
 
-  visits_text <- if(any(visitsCols$col %in% names(df))) {
+  visits_text <- paste0(" \n\nOf the "
+                        , format(visits, big.mark = ",")
+                        , " visits (site at a point in time), "
+                        , if("rel_metres" %in% names(df)) {
 
-    visitsRel <- visitsYear %>%
-      dplyr::summarise(visits = dplyr::n()
-                       , nas = sum(is.na(rel_metres))
-      )
+                          visitsRel <- visitsYear %>%
+                            dplyr::summarise(visits = dplyr::n()
+                                             , nas = sum(is.na(rel_metres))
+                            )
 
-    visits_df <- visitsYear %>%
-      dplyr::summarise(records = dplyr::n()
-                       , dplyr::across(dplyr::any_of(visitsCols$col)
-                                       , ~sum(!is.na(.)))
-      ) %>%
-      tidyr::pivot_longer(2:ncol(.),names_to = "col", values_to = "value") %>%
-      dplyr::mutate(per = round(100*value/records, 1)) %>%
-      dplyr::left_join(visitsCols) %>%
-      dplyr::mutate(text = paste0(per
-                                  , "% had a "
-                                  , colName
-                                  , " recorded")
-      )
+                          visits_df <- visitsYear %>%
+                            dplyr::summarise(records = dplyr::n()
+                                             , dplyr::across(rel_metres
+                                                             , ~sum(!is.na(.)))
+                            ) %>%
+                            dplyr::mutate(per = round(100*rel_metres/records, 1)) %>%
+                            dplyr::mutate(text = paste0(per
+                                                        , "% had a spatial accuracy estimate recorded")
+                            )
 
-    paste0(" \n\nOf the "
-           , format(visits, big.mark = ",")
-           , " visits (site at a point in time), "
-           , if(visits_df$per == 0){
-             paste0("none had a "
-                    , envFunc::vec_to_sentence(visitsCols$colName, end = "or")
-                    , " recorded")
-           } else paste(envFunc::vec_to_sentence(visits_df$text))
-           , "."
-    )
+                          paste0(if(visits_df$per == 0){
+                            paste0("none had a spatial accuracy estimate recorded")
+                          } else visits_df$text
+                          , "."
+                          )
 
-  } else NULL
+                        } else  "none had a spatial accuracy estimate recorded."
+  )
 
   #single-taxa sites
   singletons <- df %>%
@@ -300,10 +294,10 @@ data_summary_text <- function(df
                  , format(sum(singletons$records),big.mark=",")
                  , " sites with only one taxa recorded (singleton sites)."
                  , singleton_text # 'The most common taxa at singleton sites were...'
-                 , "The site with the most taxa had "
-                 , maxSite
+                 , " The site with the most taxa had "
+                 , format(maxSite, big.mark = ",")
                  , " taxa recorded, and the visit with the most taxa had "
-                 , max(visitsYear$richness, na.rm = TRUE)
+                 , format(max(visitsYear$richness, na.rm = TRUE), big.mark = ",")
                  , " taxa recorded."
   )
 

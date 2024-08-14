@@ -16,7 +16,9 @@ data_summary_text(
 
 \item{site_cols}{Character vector. Name of columns defining a site. E.g. lat/long, other coordinates, or raster cell ID.}
 
-\item{visit_cols}{Character vector. Name of columns defining a visit i.e. site plus timestamp. E.g. coordinates/cell plus date/year}
+\item{visit_cols}{Character vector. Name of columns defining a visit, usually
+site (e.g. coordinates/cell) plus timestamp (e.g. date/year), but could
+also include others such as a site name or spatial reliability}
 
 \item{data_name}{How to refer to the dataset, usually a dataset name (e.g "BDBSA", "TERN", "Other"). Only used to paste as text}
 }
