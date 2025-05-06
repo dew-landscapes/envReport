@@ -5,21 +5,22 @@
 #' source for any column in a data map.
 #'
 #' @param data_map Dataframe mapping original field to unified fields
-#' @param col Which field (column) should be summarised here.
+#' @param this_col Which field (column) should be summarised here.
 #'
 #' @return text string
 #' @export
 #'
 #' @examples
-source_of_field <- function(data_map, col) {
+source_of_field <- function(data_map, this_col) {
 
   data_map %>%
-    dplyr::filter(!is.na(!!ensym(col))) %>%
-    dplyr::select(data_name, !!ensym(col)) %>%
+    dplyr::filter(col == this_col) %>%
+    tidyr::pivot_longer(4:ncol(.)) |>
+    na.omit() |>
     dplyr::mutate(text = paste0("`"
-                                , !!ensym(col)
+                                , name
                                 , "`: `"
-                                , data_name
+                                , value
                                 , "`"
                                 )
                   ) %>%
