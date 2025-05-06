@@ -21,9 +21,6 @@ to determine how many other classes were in the clustering.}
 
 \item{clust_col}{Name of column in \code{cluster_colours} with the classes.}
 }
-\value{
-
-}
 \description{
 Plot distribution of probabilities for predicting a class
 }

@@ -4,12 +4,14 @@
 \alias{source_of_field}
 \title{Identify original source (field, data source) of a column in a data map}
 \usage{
-source_of_field(data_map, col)
+source_of_field(data_map, this_col, first_data_col = 2)
 }
 \arguments{
 \item{data_map}{Dataframe mapping original field to unified fields}
 
-\item{col}{Which field (column) should be summarised here.}
+\item{this_col}{Which field (column) should be summarised here.}
+
+\item{first_data_col}{First column in data_map containing data_names.}
 }
 \value{
 text string

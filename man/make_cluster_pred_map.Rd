@@ -39,9 +39,6 @@ make_cluster_pred_map(
 \item{xy_crs}{Anything interpreted by \code{crs} argument of \code{sf::st_as_sf()} as
 valid coordinate system for \code{x} and \code{y}.}
 }
-\value{
-
-}
 \description{
 Create a map of correctly and incorrectly predicted sites
 }
