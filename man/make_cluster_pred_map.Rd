@@ -9,6 +9,7 @@ make_cluster_pred_map(
   full_pred_df,
   cluster_colours,
   context,
+  aoi,
   clust_col = "cluster",
   pred_clust_col = "pred_cluster",
   label_for_correct = "correct",
@@ -25,6 +26,8 @@ make_cluster_pred_map(
 \item{cluster_colours}{Dataframe of classes mapped to colours.}
 
 \item{context}{Character names of columns in full_pred_df defining the context.}
+
+\item{aoi}{sf. Area of interest simple feature.}
 
 \item{clust_col}{Character name of column with the class membership.}
 

@@ -6,6 +6,7 @@
 #' @param full_pred_df All sites predicted to class.
 #' @param cluster_colours Dataframe of classes mapped to colours.
 #' @param context Character names of columns in full_pred_df defining the context.
+#' @param aoi sf. Area of interest simple feature.
 #' @param clust_col Character name of column with the class membership.
 #' @param pred_clust_col Character name of the column with the predicted class membership.
 #' @param label_for_correct Label to use in maps for correctly predicted sites.
@@ -22,6 +23,7 @@
                                     , full_pred_df
                                     , cluster_colours
                                     , context
+                                    , aoi
                                     , clust_col = "cluster"
                                     , pred_clust_col = "pred_cluster"
                                     , label_for_correct = "correct"
@@ -72,6 +74,7 @@
       dplyr::rename(!!ensym(pred_clust_col) := !!ensym(clust_col))
 
     map_palette <- c("black", colours$colour)
+
     names(map_palette) <- c(label_for_correct
                             , as.character(colours[pred_clust_col][[1]])
                             )
@@ -80,8 +83,6 @@
       tm_fill(col = "grey"
               , alpha = 0.5
               ) +
-    tm_shape(sa) +
-      tm_borders(col = "black") +
     tm_shape(map_df) +
       tm_dots(col = pred_clust_col
               , title = "Predicted ecosystem"
