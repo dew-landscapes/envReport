@@ -19,5 +19,7 @@ occ_data_time_plot(df, year_col = "year", date_format, minyear = NULL)
 ggplot2 object
 }
 \description{
-Produce a histogram of points over time from a data frame of occurrences
+Includes code from \href{https://stackoverflow.com/users/4341440/axeman}{Axeman}
+in a \href{https://stackoverflow.com/}{stackoverflow}
+\href{https://stackoverflow.com/a/44886993}{post}
 }

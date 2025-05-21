@@ -1,6 +1,10 @@
 
 #' Produce a histogram of points over time from a data frame of occurrences
 #'
+#' Includes code from [Axeman](https://stackoverflow.com/users/4341440/axeman)
+#' in a [stackoverflow](https://stackoverflow.com/)
+#' [post](https://stackoverflow.com/a/44886993)
+#'
 #' @param df Dataframe with year or date column.
 #' @param year_col Character. Name of column with date stamp. Can be numeric year, a date class eg posix, or character
 #' @param date_format Character. Format of year_col, if a character, to be parsed by as.Date. E.g. %d-%m-%Y
@@ -51,8 +55,13 @@ occ_data_time_plot <- function(df,
     dplyr::count(yearbin)
 
   dfTime_post <- df %>%
-    dplyr::filter(use_year > minyear) %>%
+    dplyr::filter(use_year >= minyear) %>%
     dplyr::count(yearbin)
+
+  int_breaks <- function(x, n = 5) {
+    l <- pretty(x, n)
+    l[abs(l %% 1) < .Machine$double.eps ^ 0.5]
+  }
 
   #plot
   ggplot2::ggplot() +
@@ -61,6 +70,8 @@ occ_data_time_plot <- function(df,
     ggplot2::geom_text(data = dfTime_pre, ggplot2::aes(yearbin, -Inf), vjust = -.3,
               label = paste0("pre-", minyear)) +
     ggplot2::labs(y = "Number of records",
-         x = "Year")
+         x = "Year") +
+    ggplot2::scale_x_continuous(breaks = int_breaks)
 
 }
+
