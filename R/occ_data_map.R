@@ -167,20 +167,20 @@ occ_data_map <- function(df,
                                    crs = out_crs),
                       bbox = box) +
     tmap::tm_grid(lines = FALSE,
-                  projection = out_crs) +
-    tmap::tm_dots(title = paste(title_prefix, "records"),
-                  col = "year",
-                  legend.format = list(big.mark = ""),
-                  palette = "viridis",
-                  style = "fixed",
-                  breaks = breaks,
-                  labels = labels
+                  crs = out_crs) +
+    tmap::tm_dots(fill = "year",
+                  fill.legend = tmap::tm_legend(title = paste(title_prefix, "records")),
+                  fill.scale = tmap::tm_scale_intervals(values = "viridis",
+                                                        label.format = list(big.mark = ""),
+                                                        breaks = breaks,
+                                                        labels = labels
                   )
+    )
 
   if(!is.null(aoi)){
     aoi_args <- c(aoi_args,
-                  alpha = 0,
-                  border.col = "black",
+                  fill_alpha = 0,
+                  col = "black",
                   lwd = 2)
 
     aoi_args_use <- aoi_args[!duplicated(names(aoi_args))]
@@ -190,7 +190,7 @@ occ_data_map <- function(df,
       do.call(tmap::tm_polygons,
               aoi_args_use) +
       do.call(tmap::tm_add_legend,
-              c(type = "fill",
+              c(type = "polygons",
                 title = aoi_name,
                 aoi_args_use))
     }
@@ -198,9 +198,9 @@ occ_data_map <- function(df,
    m <- m + tmap::tm_layout(legend.outside = TRUE)
 
   if(bin){
-    m <- m + tmap::tm_layout(title = paste0("* data points ", bin_title, "\n to reduce overlap and file size"),
-                             title.size = 0.6,
-                             title.position = c( "LEFT", "BOTTOM"))
+    m <- m + tmap::tm_title(text = paste0("* data points ", bin_title, "\n to reduce overlap and file size"),
+                            size = 0.6,
+                            position = c( "LEFT", "BOTTOM"))
     }
 
   return(m)
