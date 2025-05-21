@@ -1,4 +1,6 @@
 
+#' Describe occurrence data
+#'
 #' Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.
 #'
 #' @param df Data frame of occurrence records, e.g. as made by envImport. Needs aligned attribute names.

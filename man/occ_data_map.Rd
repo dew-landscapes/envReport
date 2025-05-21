@@ -2,8 +2,7 @@
 % Please edit documentation in R/occ_data_map.R
 \name{occ_data_map}
 \alias{occ_data_map}
-\title{Map points from a data frame with coordinates and display them binned by decade. Also includes
-option to bin points spatially to speed up drawing of large datasets. Alternative to data_name_map.}
+\title{Produce a map of occurrence records}
 \usage{
 occ_data_map(
   df,
