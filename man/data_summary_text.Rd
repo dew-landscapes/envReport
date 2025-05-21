@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_summary_text.R
 \name{data_summary_text}
 \alias{data_summary_text}
-\title{Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.}
+\title{Describe occurrence data}
 \usage{
 data_summary_text(
   df,
