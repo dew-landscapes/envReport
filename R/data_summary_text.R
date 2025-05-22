@@ -139,11 +139,30 @@ data_summary_text <- function(df
   #plant data/survey columns
   plantCols <- tibble::tribble(
     ~col, ~colName
-    , "cover", "cover estimate"
+    , "use_cover", "cover estimate"
     , "lifeform", "lifeform (shrub, grass, tree etc.)"
     , "lifespan", "lifespan (annual or perennial)"
     , "quad_metres", "quadrat size"
   )
+
+  # deal with 'cover' --------
+  if(any(c("cover", "cover_code") %in% names(df))) {
+
+    if("cover" %in% names(df)) {
+
+      df <- df |>
+        dplyr::mutate(use_cover = dplyr::if_else(cover <= 0, NA, cover))
+
+    } else df <- df |> dplyr::mutate(use_cover = NA)
+
+    if("cover_code" %in% names(df)) {
+
+      df <- df |>
+        dplyr::mutate(use_cover = dplyr::if_else(!is.na(cover_code), 1, use_cover))
+
+    }
+
+  }
 
   #percent of records that are plants
   plantPc <- df %>%
@@ -156,28 +175,24 @@ data_summary_text <- function(df
   ) {
 
     #build descriptions of % of records that have plantCols recorded
-    plant_df <- df %>% dplyr::filter(kingdom=="Plantae") %>%
-      {if(!c("COVER") %in% names(df)) (.) else if("COVCODE" %in% names(.)) (.) %>%
-          dplyr::mutate(COVCODE = if_else(is.na(COVCODE)
-                                          , as.character(COVER)
-                                          , COVCODE)) else (.) %>%
-          dplyr::mutate(COVCODE = COVER)
-      } %>%
+    plant_df <- df |>
+      dplyr::filter(kingdom == "Plantae") |>
       dplyr::summarise(records = dplyr::n()
                        , dplyr::across(dplyr::any_of(plantCols$col)
-                                       , ~sum(!is.na(.)))
-      ) %>%
+                                       , \(x) sum(!is.na(x))
+                                       )
+                       ) |>
       tidyr::pivot_longer(2:ncol(.)
                           , names_to = "col"
                           , values_to = "value") %>%
-      dplyr::mutate(per = round(100*value/records, 1)) %>%
+      dplyr::mutate(per = round(100 * value / records, 1)) %>%
       dplyr::left_join(plantCols) %>%
       dplyr::mutate(text = paste0(per
                                   , "% had a "
                                   , colName
                                   , " recorded"
-      )
-      )
+                                  )
+                    )
 
     plant_summs <- plant_df %>%
       dplyr::pull(text)
