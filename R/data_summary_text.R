@@ -181,7 +181,7 @@ data_summary_text <- function(df
                        , dplyr::across(dplyr::any_of(plantCols$col)
                                        , \(x) sum(!is.na(x))
                                        )
-                       ) |>
+                       ) %>%
       tidyr::pivot_longer(2:ncol(.)
                           , names_to = "col"
                           , values_to = "value") %>%
