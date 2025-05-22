@@ -17,8 +17,11 @@
 data_summary_text <- function(df
                               , site_cols = c("lat", "long")
                               , visit_cols = c("lat", "long", "year")
-                              , data_name
+                              , data_name = NULL
+                              , aoi_name = if(exists("settings")) settings$name else NULL
 ) {
+
+  if(is.null(data_name)) data_name <- unique(df$data_name_use)
 
   df <- df %>%
     dplyr::mutate(year = lubridate::year(date)
@@ -193,12 +196,6 @@ data_summary_text <- function(df
 
   }
 
-  #visits
-  visitsCols_ <- tibble::tribble(
-    ~col, ~colName
-    , "rel_metres", "spatial accuracy estimate"
-  )
-
   #visits & spatial accuracy
   visitsYear <- df %>%
     dplyr::count(dplyr::across(dplyr::any_of(visit_cols))
@@ -210,29 +207,31 @@ data_summary_text <- function(df
                         , " visits (site at a point in time), "
                         , if("rel_metres" %in% names(df)) {
 
-                          visitsRel <- visitsYear %>%
-                            dplyr::summarise(visits = dplyr::n()
-                                             , nas = sum(is.na(rel_metres))
-                            )
+                          with_rel <- bio_df %>%
+                            dplyr::group_by(dplyr::across(tidyselect::any_of(visit_cols))) %>%
+                            dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE)) %>%
+                            dplyr::ungroup() |>
+                            dplyr::mutate(rel_metres = rel_metres > 0) |>
+                            dplyr::filter(rel_metres) |>
+                            dplyr::count(rel_metres) |>
+                            dplyr::pull(n) %>%
+                            `[[`(1)
 
-                          visits_df <- visitsYear %>%
-                            dplyr::summarise(records = dplyr::n()
-                                             , dplyr::across(rel_metres
-                                                             , ~sum(!is.na(.)))
-                            ) %>%
-                            dplyr::mutate(per = round(100*rel_metres/records, 1)) %>%
-                            dplyr::mutate(text = paste0(per
-                                                        , "% had a spatial accuracy estimate recorded")
-                            )
+                          per_with_rel <- 100 * with_rel / visits
 
-                          paste0(if(visits_df$per == 0){
+                          if(per_with_rel == 0){
+
                             paste0("none had a spatial accuracy estimate recorded")
-                          } else visits_df$text
-                          , "."
-                          )
+
+                            } else {
+
+                              paste0(per_with_rel, "% had a spatial accuracy estimate recorded.")
+
+                            }
 
                         } else  "none had a spatial accuracy estimate recorded."
-  )
+
+                        )
 
   #single-taxa sites
   singletons <- df %>%
@@ -272,6 +271,7 @@ data_summary_text <- function(df
   # Build final output
   text <- paste0("The retrieval of data from "
                  , data_name
+                 , if(!is.na(aoi_name)) paste0(" for ", aoi_name)
                  , " returned a data set of "
                  , format(records, big.mark=",")
                  , " records of "

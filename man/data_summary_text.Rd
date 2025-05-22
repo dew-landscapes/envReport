@@ -8,7 +8,8 @@ data_summary_text(
   df,
   site_cols = c("lat", "long"),
   visit_cols = c("lat", "long", "year"),
-  data_name
+  data_name = NULL,
+  aoi_name = if (exists("settings")) settings$name else NULL
 )
 }
 \arguments{
