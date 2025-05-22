@@ -222,7 +222,7 @@ data_summary_text <- function(df
                         , " visits (site at a point in time), "
                         , if("rel_metres" %in% names(df)) {
 
-                          with_rel <- bio_df %>%
+                          with_rel <- df %>%
                             dplyr::group_by(dplyr::across(tidyselect::any_of(visit_cols))) %>%
                             dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE)) %>%
                             dplyr::ungroup() |>
