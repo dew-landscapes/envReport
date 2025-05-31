@@ -226,13 +226,9 @@ data_summary_text <- function(df
                             dplyr::group_by(dplyr::across(tidyselect::any_of(visit_cols))) %>%
                             dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE)) %>%
                             dplyr::ungroup() |>
-                            dplyr::mutate(rel_metres = rel_metres > 0) |>
-                            dplyr::filter(rel_metres) |>
-                            dplyr::count(rel_metres) |>
-                            dplyr::pull(n) %>%
-                            `[[`(1)
+                            dplyr::filter(rel_metres > 0)
 
-                          per_with_rel <- 100 * with_rel / visits
+                          per_with_rel <- 100 * nrow(with_rel) / visits
 
                           if(per_with_rel == 0){
 
