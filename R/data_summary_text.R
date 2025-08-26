@@ -186,10 +186,12 @@ data_summary_text <- function(df_file
   }
 
   #percent of records that are plants
-  plantPc <- df %>%
-    dplyr::filter(kingdom == "Plantae") %>%
-    {nrow(.) / nrow(df) * 100} %>%
-    round(digits = 1)
+  plantPc <- if("kingdom" %in% names(df)) {
+    df %>%
+      dplyr::filter(kingdom == "Plantae") %>%
+      {nrow(.) / nrow(df) * 100} %>%
+      round(digits = 1)
+  } else 0
 
   plant_text <- if(all(any(c(plantCols$col) %in% names(df))
                        , plantPc > 0)
