@@ -21,7 +21,7 @@ data_summary_text <- function(df_file
                               , aoi_name = if(exists("settings")) settings$name else NA
 ) {
 
-  if(!class(df_file) %in% c("character")) stop("data_summary_text expects a file path to a parquet file.")
+  if(!c("character") %in% class(df_file)) stop("data_summary_text expects a file path to a parquet file.")
 
   df <- arrow::open_dataset(df_file)
 

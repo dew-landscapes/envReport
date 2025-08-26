@@ -5,15 +5,15 @@
 \title{Describe occurrence data}
 \usage{
 data_summary_text(
-  df,
+  df_file,
   site_cols = c("lat", "long"),
   visit_cols = c("lat", "long", "year"),
   data_name = NULL,
-  aoi_name = if (exists("settings")) settings$name else NULL
+  aoi_name = if (exists("settings")) settings$name else NA
 )
 }
 \arguments{
-\item{df}{Data frame of occurrence records, e.g. as made by envImport. Needs aligned attribute names.}
+\item{df_file}{File path to .parquet of occurrence records, e.g. as made by envImport. Needs aligned attribute names.}
 
 \item{site_cols}{Character vector. Name of columns defining a site. E.g. lat/long, other coordinates, or raster cell ID.}
 
