@@ -3,7 +3,7 @@
 #'
 #' Build a description of occurrence records including number of records/sites/taxa, earliest and latest records/taxa, and summaries of data fields.
 #'
-#' @param df Data frame of occurrence records, e.g. as made by envImport. Needs aligned attribute names.
+#' @param df_file File path to .parquet of occurrence records, e.g. as made by envImport. Needs aligned attribute names.
 #' @param site_cols Character vector. Name of columns defining a site. E.g. lat/long, other coordinates, or raster cell ID.
 #' @param visit_cols Character vector. Name of columns defining a visit, usually
 #'   site (e.g. coordinates/cell) plus timestamp (e.g. date/year), but could
@@ -14,30 +14,33 @@
 #' @export
 
 
-data_summary_text <- function(df
+data_summary_text <- function(df_file
                               , site_cols = c("lat", "long")
                               , visit_cols = c("lat", "long", "year")
                               , data_name = NULL
-                              , aoi_name = if(exists("settings")) settings$name else NULL
+                              , aoi_name = if(exists("settings")) settings$name else NA
 ) {
 
-  if(is.null(data_name)) data_name <- unique(df$data_name_use)
+  if(!class(df_file) %in% c("character")) stop("data_summary_text expects a file path to a parquet file.")
 
-  df <- df %>%
-    dplyr::mutate(year = lubridate::year(date)
-                  , month = lubridate::month(date)
-                  , formatted_name = gsub("^([A-Za-z]+ [a-z]+)(.*)$", "_\\1_\\2", original_name) #add italics around genus-species
-    )
+  df <- arrow::open_dataset(df_file)
 
-  if("quad_x" %in% names(df)) {
-    df <- df %>%
-      dplyr::mutate(quad_metres = quad_x*quad_y)
+  if(is.null(data_name)) data_name <- df |> dplyr::pull(data_name) |> unique()
+
+  # df <- df %>%
+  #   dplyr::mutate(year = lubridate::year(date)
+  #                 , month = lubridate::month(date)
+  #                 , formatted_name = gsub("^([A-Za-z]+ [a-z]+)(.*)$", "_\\1_\\2", original_name) #add italics around genus-species
+  #   )
+
+  format_name <- function(x) { #add italics around genus-species
+    gsub("^([A-Za-z]+ [a-z]+)(.*)$", "_\\1_\\2", x)
   }
 
-
-  taxa <- dplyr::n_distinct(df["original_name"])
-  sites <- df %>% dplyr::distinct(across(any_of(site_cols))) %>% nrow()
-  visits <- df %>% dplyr::distinct(across(any_of(visit_cols))) %>% nrow()
+  #counts
+  taxa <- length(unique(dplyr::pull(df, original_name)))
+  sites <- df %>% dplyr::distinct(across(any_of(site_cols))) %>% dplyr::collect() |> nrow()
+  visits <- df %>% dplyr::distinct(across(any_of(visit_cols))) %>% dplyr::collect() |> nrow()
   records <- nrow(df)
 
   #first record year & month
@@ -62,12 +65,16 @@ data_summary_text <- function(df
 
   #most recorded taxa, with count
   maxSpp <- df %>%
-    dplyr::count(formatted_name) %>%
+    dplyr::count(original_name) %>%
     dplyr::arrange(desc(n)) %>%
-    dplyr::slice(1)
+    dplyr::collect() |>
+    dplyr::slice(1) |>
+    dplyr::mutate(formatted_name = format_name(original_name))
 
   #first record year of most recorded taxa
   maxSppMinYear <- df %>%
+    dplyr::select(original_name, year) |>
+    dplyr::collect() |>
     dplyr::add_count(original_name) %>%
     dplyr::filter(n == max(n)) %>%
     dplyr::filter(year == min(year)) %>%
@@ -76,14 +83,17 @@ data_summary_text <- function(df
 
   #full-row record of most recent taxa
   lastSppDf <- df %>%
-    dplyr::group_by(formatted_name) %>%
+    dplyr::select(original_name, year, month) |>
+    dplyr::collect() |>
+    dplyr::group_by(original_name) %>%
     dplyr::filter(year == min(year)) %>%
     dplyr::filter(month == min(month)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(year == max(year)) %>%
     dplyr::filter(month == max(month)) %>%
-    dplyr::add_count(formatted_name) %>%
-    dplyr::slice(1)
+    dplyr::add_count(original_name) %>%
+    dplyr::slice(1) |>
+    dplyr::mutate(formatted_name = format_name(original_name))
 
   #name of most recent taxa
   lastSpp <- lastSppDf %>%
@@ -102,7 +112,12 @@ data_summary_text <- function(df
 
 
   #build text of oldest/newest records
-  if(dplyr::n_distinct(df$year) > 1) {
+  distinct_yrs <- df |>
+    dplyr::select(year) |>
+    dplyr::distinct() |>
+    dplyr::collect() |>
+    nrow()
+  if(distinct_yrs > 1) {
 
     year_range <- paste0("The earliest "
                          , data_name
@@ -137,6 +152,12 @@ data_summary_text <- function(df
   }
 
   #plant data/survey columns
+  if("quad_x" %in% names(df)) {
+    df <- df %>%
+      dplyr::collect() |>
+      dplyr::mutate(quad_metres = quad_x*quad_y)
+  }
+
   plantCols <- tibble::tribble(
     ~col, ~colName
     , "use_cover", "cover estimate"
@@ -177,6 +198,8 @@ data_summary_text <- function(df
     #build descriptions of % of records that have plantCols recorded
     plant_df <- df |>
       dplyr::filter(kingdom == "Plantae") |>
+      dplyr::select(any_of(plantCols$col)) |>
+      dplyr::collect() |>
       dplyr::summarise(records = dplyr::n()
                        , dplyr::across(dplyr::any_of(plantCols$col)
                                        , \(x) sum(!is.na(x))
@@ -215,7 +238,8 @@ data_summary_text <- function(df
   visitsYear <- df %>%
     dplyr::count(dplyr::across(dplyr::any_of(visit_cols))
                  , name = "richness"
-    )
+    ) |>
+    dplyr::collect()
 
   visits_text <- paste0(" \n\nOf the "
                         , format(visits, big.mark = ",")
@@ -224,7 +248,10 @@ data_summary_text <- function(df
 
                           with_rel <- df %>%
                             dplyr::group_by(dplyr::across(tidyselect::any_of(visit_cols))) %>%
-                            dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE)) %>%
+                            dplyr::select(any_of(visit_cols), rel_metres) |>
+                            dplyr::filter(!is.na(rel_metres)) |>
+                            dplyr::collect() |>
+                            dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE), .groups = "keep") %>%
                             dplyr::ungroup() |>
                             dplyr::filter(rel_metres > 0)
 
@@ -236,7 +263,7 @@ data_summary_text <- function(df
 
                             } else {
 
-                              paste0(per_with_rel, "% had a spatial accuracy estimate recorded.")
+                              paste0(round(per_with_rel, 2), "% had a spatial accuracy estimate recorded.")
 
                             }
 
@@ -246,20 +273,24 @@ data_summary_text <- function(df
 
   #single-taxa sites
   singletons <- df %>%
+    dplyr::select(any_of(visit_cols), original_name) |>
     dplyr::count(dplyr::across(dplyr::any_of(visit_cols)), name = "sr") %>%
     dplyr::filter(sr == 1) %>%
-    dplyr::inner_join(df) %>%
-    dplyr::count(formatted_name, name = "records") %>%
-    dplyr::mutate(text = paste0(formatted_name
+    dplyr::inner_join(df %>%
+                        dplyr::select(any_of(visit_cols), original_name)) %>%
+    dplyr::collect() |>
+    dplyr::count(original_name, name = "records") %>%
+    dplyr::mutate(big_records = format(records, big.mark=",")
+                  , text = paste0(format_name(original_name)
                                 , " ("
-                                , format(records,big.mark=",",trim = TRUE)
+                                , big_records
                                 , " sites)"
     )
     )
 
   singleton_text <- if(nrow(singletons) > 0) {
     paste0(" The most common taxa at singleton sites "
-           , if(dplyr::n_distinct(singletons$formatted_name) > 1) "were " else "was "
+           , if(dplyr::n_distinct(singletons$original_name) > 1) "were " else "was "
            , singletons %>%
              dplyr::arrange(desc(records)) %>%
              dplyr::pull(text) %>%
