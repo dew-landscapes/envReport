@@ -42,8 +42,8 @@ occ_data_map <- function(df,
                          bin_method = NULL,
                          bin_size = NULL,
                          aoi_args = list(),
-                         aoi_name
-){
+                         aoi_name = NULL
+                         ){
 
   #arg checks
   if (!bin && (!is.null(bin_method) || !is.null(bin_size))){
@@ -166,8 +166,6 @@ occ_data_map <- function(df,
                                    coords = c(x, y),
                                    crs = out_crs),
                       bbox = box) +
-    tmap::tm_grid(lines = FALSE,
-                  crs = out_crs) +
     tmap::tm_dots(fill = "year",
                   fill.legend = tmap::tm_legend(title = paste(title_prefix, "records")),
                   fill.scale = tmap::tm_scale_intervals(values = "viridis",
@@ -175,7 +173,9 @@ occ_data_map <- function(df,
                                                         breaks = breaks,
                                                         labels = labels
                   )
-    )
+                  ) +
+    tmap::tm_grid(lines = FALSE,
+                  crs = out_crs)
 
   if(!is.null(aoi)){
     aoi_args <- c(aoi_args,
