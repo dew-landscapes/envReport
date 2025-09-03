@@ -119,9 +119,29 @@ occ_data_map <- function(df,
 # aoi/extent
 
   box <- if(is.null(aoi)) {
-    sf::st_bbox(sf::st_as_sf(df,
-                             coords = c(x, y),
-                             crs = in_crs))
+
+    if(nrow(dplyr::distinct(df, !!rlang::ensym(x), !!rlang::ensym(y))) == 1) {
+
+      df_box <- sf::st_as_sf(df |> dplyr::distinct(!!rlang::ensym(x), !!rlang::ensym(y))
+                             , coords = c(x, y)
+                             , crs = in_crs
+                             )
+
+      buf_dist <- if(sf::st_is_longlat(df_box)) 0.0009 else 1000
+
+      df_box <- df_box |>
+        sf::st_buffer(dist = buf_dist) |>
+        sf::st_bbox()
+
+    } else {
+
+      sf::st_bbox(sf::st_as_sf(df
+                               , coords = c(x, y)
+                               , crs = in_crs
+                               )
+                  )
+
+    }
 
   } else if(!"bbox" %in% class(aoi)) {
 
