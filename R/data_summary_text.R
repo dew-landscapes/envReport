@@ -38,29 +38,37 @@ data_summary_text <- function(df_file
   }
 
   #counts
-  taxa <- length(unique(dplyr::pull(df, original_name)))
+  taxa <- df |> dplyr::count(original_name) |> dplyr::collect() |> nrow()
   sites <- df %>% dplyr::distinct(across(any_of(site_cols))) %>% dplyr::collect() |> nrow()
   visits <- df %>% dplyr::distinct(across(any_of(visit_cols))) %>% dplyr::collect() |> nrow()
   records <- nrow(df)
 
   #first record year & month
-  minYear <- df %>%
-    dplyr::pull(year) %>%
+  minYear <- df |>
+    dplyr::count(year) |>
+    dplyr::collect() |>
+    dplyr::pull(year) |>
     min()
 
-  minYearMonth <- df %>%
-    dplyr::filter(year == minYear) %>%
-    dplyr::pull(month) %>%
+  minYearMonth <- df |>
+    dplyr::count(year, month) |>
+    dplyr::collect() |>
+    dplyr::filter(year == min(year)) |>
+    dplyr::pull(month) |>
     min()
 
   #newest record year & month
-  maxYear <- df %>%
-    dplyr::pull(year) %>%
+  maxYear <- df |>
+    dplyr::count(year) |>
+    dplyr::collect() |>
+    dplyr::pull(year) |>
     max()
 
-  maxYearMonth <- df %>%
-    dplyr::filter(year == maxYear) %>%
-    dplyr::pull(month) %>%
+  maxYearMonth <- df |>
+    dplyr::distinct(year, month) |>
+    dplyr::collect() |>
+    dplyr::filter(year == max(year)) |>
+    dplyr::pull(month) |>
     max()
 
   #most recorded taxa, with count
@@ -73,10 +81,9 @@ data_summary_text <- function(df_file
 
   #first record year of most recorded taxa
   maxSppMinYear <- df %>%
-    dplyr::select(original_name, year) |>
+    inner_join(maxSpp) |>
+    dplyr::distinct(year) |>
     dplyr::collect() |>
-    dplyr::add_count(original_name) %>%
-    dplyr::filter(n == max(n)) %>%
     dplyr::filter(year == min(year)) %>%
     dplyr::pull(year) %>%
     unique()
@@ -117,6 +124,7 @@ data_summary_text <- function(df_file
     dplyr::distinct() |>
     dplyr::collect() |>
     nrow()
+
   if(distinct_yrs > 1) {
 
     year_range <- paste0("The earliest "
@@ -126,7 +134,7 @@ data_summary_text <- function(df_file
                          , " "
                          , minYear
                          , ", and the latest records were collected in "
-                         , month.name[minYearMonth]
+                         , month.name[maxYearMonth]
                          , " "
                          , maxYear
                          , "."
@@ -145,7 +153,7 @@ data_summary_text <- function(df_file
 
   } else {
 
-    year_range <- paste0("All ",data_name," records were dated ",unique(df$year),".")
+    year_range <- paste0("All ",data_name," records were dated ",df |> dplyr::distinct(year) |> dplyr::collect() |> dplyr::pull(year) |> unique(),".")
 
     year_spp <- "."
 
@@ -193,9 +201,7 @@ data_summary_text <- function(df_file
       round(digits = 1)
   } else 0
 
-  plant_text <- if(all(any(c(plantCols$col) %in% names(df))
-                       , plantPc > 0)
-  ) {
+  plant_text <- if(all(any(plantCols$col %in% names(df)), plantPc > 0)) {
 
     #build descriptions of % of records that have plantCols recorded
     plant_df <- df |>
@@ -237,11 +243,16 @@ data_summary_text <- function(df_file
   }
 
   #visits & spatial accuracy
-  visitsYear <- df %>%
-    dplyr::count(dplyr::across(dplyr::any_of(visit_cols))
+  maxVisits <- df %>%
+    dplyr::distinct(dplyr::across(dplyr::all_of(visit_cols))
+                    , original_name
+                    ) |>
+    dplyr::count(dplyr::across(dplyr::all_of(visit_cols))
                  , name = "richness"
-    ) |>
-    dplyr::collect()
+                 ) %>%
+    dplyr::collect() |>
+    dplyr::pull(richness) %>%
+    max()
 
   visits_text <- paste0(" \n\nOf the "
                         , format(visits, big.mark = ",")
@@ -249,13 +260,9 @@ data_summary_text <- function(df_file
                         , if("rel_metres" %in% names(df)) {
 
                           with_rel <- df %>%
-                            dplyr::group_by(dplyr::across(tidyselect::any_of(visit_cols))) %>%
-                            dplyr::select(any_of(visit_cols), rel_metres) |>
                             dplyr::filter(!is.na(rel_metres)) |>
-                            dplyr::collect() |>
-                            dplyr::summarise(rel_metres = max(rel_metres, na.rm = TRUE), .groups = "keep") %>%
-                            dplyr::ungroup() |>
-                            dplyr::filter(rel_metres > 0)
+                            dplyr::distinct(dplyr::across(tidyselect::any_of(visit_cols))) |>
+                            dplyr::collect()
 
                           per_with_rel <- 100 * nrow(with_rel) / visits
 
@@ -275,11 +282,11 @@ data_summary_text <- function(df_file
 
   #single-taxa sites
   singletons <- df %>%
-    dplyr::select(any_of(visit_cols), original_name) |>
-    dplyr::count(dplyr::across(dplyr::any_of(visit_cols)), name = "sr") %>%
+    dplyr::select(any_of(site_cols), original_name) |>
+    dplyr::count(dplyr::across(dplyr::any_of(site_cols)), name = "sr") %>%
     dplyr::filter(sr == 1) %>%
     dplyr::inner_join(df %>%
-                        dplyr::select(any_of(visit_cols), original_name)) %>%
+                        dplyr::select(any_of(site_cols), original_name)) %>%
     dplyr::collect() |>
     dplyr::count(original_name, name = "records") %>%
     dplyr::mutate(big_records = format(records, big.mark=",")
@@ -304,11 +311,13 @@ data_summary_text <- function(df_file
 
   #highest-taxa sites
   maxSite <- df %>%
+    dplyr::distinct(dplyr::across(dplyr::all_of(site_cols))
+                    , original_name
+                    ) |>
     dplyr::count(dplyr::across(dplyr::all_of(site_cols))
-                 , lat
-                 , long
                  , name = "richness"
-    ) %>%
+                 ) %>%
+    dplyr::collect() |>
     dplyr::pull(richness) %>%
     max()
 
@@ -343,7 +352,7 @@ data_summary_text <- function(df_file
                  , " The site with the most taxa had "
                  , format(maxSite, big.mark = ",")
                  , " taxa recorded, and the visit with the most taxa had "
-                 , format(max(visitsYear$richness, na.rm = TRUE), big.mark = ",")
+                 , format(maxVisits, big.mark = ",")
                  , " taxa recorded."
   )
 
