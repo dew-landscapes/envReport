@@ -4,7 +4,11 @@
 \alias{source_of_field}
 \title{Identify original source (field, data source) of a column in a data map}
 \usage{
-source_of_field(data_map, this_col, first_data_col = 2)
+source_of_field(
+  data_map,
+  this_col,
+  first_data_col = which(names(data_map) == "bdbsa")
+)
 }
 \arguments{
 \item{data_map}{Dataframe mapping original field to unified fields}

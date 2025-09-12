@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-source_of_field <- function(data_map, this_col, first_data_col = 2) {
+source_of_field <- function(data_map, this_col, first_data_col = which(names(data_map) == "bdbsa")) {
 
   data_map %>%
     dplyr::filter(col == this_col) %>%

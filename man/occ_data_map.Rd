@@ -18,7 +18,7 @@ occ_data_map(
   bin_method = NULL,
   bin_size = NULL,
   aoi_args = list(),
-  aoi_name
+  aoi_name = NULL
 )
 }
 \arguments{
