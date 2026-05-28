@@ -1,11 +1,28 @@
-All analyses were conducted in a scripted workflow using the statistical computing environment ['R'](https://www.r-project.org/) `r cite_package("base", bib_file = pkg_bib_file)`. R is free and open-source software, commonly used by researchers from a range of fields for analyses and graphics. It can be extended by a range of open-source packages designed for specific analyses or other tasks, built by a large and active development community. The packages used in this project are listed in Appendix Table \@ref(tab:packages). R was used within the [R-studio](https://www.rstudio.com/) IDE (integrated development environment), which provides a range of user-friendly features to facilitate interaction with R such as a graphical user interface, project organisation, and integration with [git](https://git-scm.com/) and other version control systems. 
+All analyses were conducted in a scripted workflow using the statistical computing environment ['R'](https://www.r-project.org/) `r cite_package("base")`. R is free and open-source software, commonly used by researchers from a range of fields for analyses and graphics. It can be extended by a range of open-source packages designed for specific analyses or other tasks, built by a large and active development community. The packages used in this project are listed in Appendix Table \@ref(tab:packages). R was used within the [R-studio](https://www.rstudio.com/) IDE (integrated development environment), which provides a range of user-friendly features to facilitate interaction with R such as a graphical user interface, project organisation, and integration with [git](https://git-scm.com/) and other version control systems. 
 
-The coding workflow is implemented using the *targets* package `r cite_package("targets", bib_file = pkg_bib_file)`. Targets manages complex coding pipelines by skipping tasks that are already up-to-date, and only running what is required. This allows for incremental changes to code without needing to rerun the full workflow from scratch, which may take several days.
+The coding workflow is implemented using the *targets* package `r cite_package("targets")`. Targets manages complex coding pipelines by skipping tasks that are already up-to-date, and only running what is required. This allows for incremental changes to code without needing to rerun the full workflow from scratch, which may take several days.
 
-The production of this report is part of this scripted and *targets*-wrapped workflow, using the markdown language implemented in R by the packages *rmarkdown*, *knitr*, and *bookdown* `r cite_package(c("rmarkdown", "knitr", "bookdown"), bib_file = pkg_bib_file)`. This allows for any updates to the analysis to be automatically reflected in the report output.
+The production of this report is part of this scripted and *targets*-wrapped workflow, using the markdown language implemented in R by the packages *rmarkdown*, *knitr*, and *bookdown* `r cite_package(c("rmarkdown", "knitr", "bookdown"))`. This allows for any updates to the analysis to be automatically reflected in the report output.
 
-All code is stored in a version control system (GitHub) at `r repo_link` (repository is currently private, so link will probably not work).
+All code is stored in a version control system (GitHub) at [`r basename(here::here())`](`r repo_link`) (repository is currently private, so link will probably not work).
 
-In addition to existing packages, several purpose-built packages were created to facilitate this workflow:
+In addition to existing `R` packages, several purpose-built packages were created by DEW to facilitate this workflow (Table \@ref(tab:envPackages)).
 
--   `r env_packages_txt`
+```{r envPackages}
+
+tibble::tibble(package = packages) |>
+  dplyr::filter(grepl("^env", package)) |>
+  dplyr::mutate(title = purrr::map_chr(package
+                                             , \(x) packageDescription(x)$Title
+                                             )
+                , description = purrr::map_chr(package
+                                               , \(x) packageDescription(x)$Description
+                                               )
+                ) |>
+  env_kable_extra(caption = paste0("Packages developed by DEW to assist with this workflow and report")
+                  , height = "500px"
+                  )
+
+
+```
+
