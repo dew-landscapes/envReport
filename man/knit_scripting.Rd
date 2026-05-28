@@ -4,14 +4,19 @@
 \alias{knit_scripting}
 \title{Insert the scripted workflow description common to most projects}
 \usage{
-knit_scripting(pkg_bib_file)
+knit_scripting(
+  packages = sort(unique(unname(unlist(yaml::read_yaml(here::here("settings",
+    "packages.yaml"))))))
+)
 }
 \arguments{
-\item{pkg_bib_file}{\emph{Absolute} file path to packages.bib (e.g. in report_prep store). Usually needs additional dots .. when run inside a report.}
+\item{packages}{Character. Vector of any loaded packages (doesn't have to
+be limited to just \code{envBlah} packages).}
 }
 \value{
 Markdown child document.
 }
 \description{
-Describes R/RStudio, git, packages, targets, and reporting. Also introduces \code{envBlah} packages, pulling from packages_bib_file
+Describes R/RStudio, git, packages, targets, and reporting. Also introduces
+\code{envBlah} packages, pulling from packages_bib_file
 }
