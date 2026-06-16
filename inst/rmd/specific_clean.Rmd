@@ -1,0 +1,9 @@
+## `r basename(here::here())` specific cleaning {#specificclean}
+
+The [generic cleaning process](#genricclean) was not adequate, by itself, to produce a data set ready for use in `r basename(here::here())`. As just one example: it contained occurrence records with spatial reliability as low as `r min_geo_rel_km` km which would generate spurious results when intersected with environmental data with a grain of `r settings$grain$res_x` m. The project-specific cleaning steps are outlined briefly below.
+
+```{r specificCleanText, results = "asis"}
+
+envClean::knit_clean(clean_summary = clean_summary |> dplyr::filter(grepl(basename(here::here()), path)))
+
+```

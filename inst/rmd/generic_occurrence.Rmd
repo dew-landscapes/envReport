@@ -1,0 +1,12 @@
+
+## Occurrence data {#occdata}
+
+This project used aggregated and 'cleaned' species occurrence data from `r nrow(bio_all_info)` data sources. Collectively, these sources account for the vast majority of occurrence data available for South Australia. These data were aggregated in the `envOcc` project [@RN4605] and cleaned in the `envCleaned` project [@RN4606].
+
+Aggregating data from disparate sources was a choice to preference larger amounts of unstructured data over smaller amounts of structured data [e.g. @RN4568;@RN4611]. Structured data utilises repeatable methods (e.g., specific survey times, locations and stopping rules, often with repeat visits to the same locations) while unstructured data is typically opportunistic in nature [@RN4569]. Aggregation was done via data pooling [e.g. @RN4611;@RN4612]. In making the choice to pool unstructured data, the resulting data is likely to suffer several sources of bias [@RN4567; @RN4572], for example:
+
+1. effort across time (e.g. an area is surveyed in one year and then not surveyed again for many years)
+1. effort across space (e.g. easily accessed locations are surveyed more frequently than difficult to access locations)
+1. the interaction of 1) and 2)
+
+Each of these sources of bias are also relevant to each individual taxa within the aggregated data set.

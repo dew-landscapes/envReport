@@ -1,0 +1,32 @@
+
+## Data aggregation
+
+Table \@ref(tab:sourcestable) shows the data sources used and how many records were retrieved from each source by envOcc [@RN4605].
+
+```{r sourcestable}
+  
+bio_all_info |> 
+  dplyr::mutate('date retrieved' = as.Date(modification_time)) |> 
+  dplyr::select("name" = data_name_use, "description" = desc, 'date retrieved', records, ref) |>
+  env_kable_extra(format.args = list(big.mark = ",")
+                  , caption = "Data sources contributing to the aggregated dataset."
+                  , height = "500px"
+                  )
+
+```
+
+## Summary of cleaning results {#cleanresult}
+
+Table \@ref(tab:cleanResult) shows the number of taxa, records, visits and sites as the data moved through the cleaning process. At the end of the cleaning process there were `r format(min(clean_summary$taxa), big.mark = ",")` taxa from `r format(min(clean_summary$sites), big.mark = ",")` sites with `r format(min(clean_summary$records), big.mark = ",")` records.
+
+See the [appendices](#surveybins) Table \@ref(tab:surveysTidy) for surveys contributing bins to further analysis after all the data cleaning, filtering and tidying.
+
+```{r cleanResult}
+
+clean_summary |>
+  dplyr::select(clean, desc, taxa, records, visits, sites) |>
+  env_kable_extra(caption = "Summary of the cleaning process"
+                  , format.args = list(big.mark = ",")
+                  )
+
+```

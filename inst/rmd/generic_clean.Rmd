@@ -1,0 +1,10 @@
+
+## Generic cleaning {#genericclean}
+
+Generic cleaning occurred within a different project (`envCleaned`) and was focused on project agnostic cleaning steps [@RN4606]. The cleaning steps are outlined briefly below.
+
+```{r genericCleanText, results = "asis"}
+
+envClean::knit_clean(clean_summary = clean_summary |> dplyr::filter(! grepl(basename(here::here()), path)))
+
+```

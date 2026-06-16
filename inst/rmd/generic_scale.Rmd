@@ -1,0 +1,28 @@
+## Study extent {#extent}
+
+The study was limited geographically to South Australian environments. These were defined by the combination of Interim Biogeographic Regionalisation for Australia (IBRA) Subregions [@RN4393] that intersect South Australia, and Integrated Marine and Coastal Regionalisation of Australia (IMCRA) bioregions [@RN4571] that cover the South Australian coastline (Figure \@ref(fig:extentSAMap)). This boundary extends beyond the state border to ensure coverage of all similar environmental settings to those that occur within South Australia. The same extent was also used to generate all the [environmental layers](#envdata).
+
+The study was limited temporally to a period of time described using the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard, in this case '`r settings$extent$extent_time`', i.e. `r readr::parse_number(settings$extent$extent_time)` `r envTargets::extract_temporal_grain(settings$extent)`s up to and including the last full calendar year.
+
+```{r extentSAMap, fig.cap = "Records of taxa recorded from within the extent of the blue boundary were kept to the extent of the black boundary"}
+
+m <- tmap::tm_shape(extent_sf) +
+  tmap::tm_borders(col = "black") +
+  tmap::tm_shape(extent_sf_taxa) +
+  tmap::tm_borders(col = "blue")
+
+m <- tmap::tmap_leaflet(m)
+
+m
+
+```
+
+## Study grain {#grain}
+
+Once data were accumulated (see [occurrence data](#occdata)) they were cleaned with reference to a regular grain (with reference to temporal, geographic and taxonomic grain) [e.g. @RN4609;@RN4610].
+
+The geographic grain was `r settings$grain$res_x` metres, creating a grid over the [geographic extent](#extent) of `r terra::ncol(terra::rast(base_grid_path))` columns and `r terra::nrow(terra::rast(base_grid_path))` rows.
+
+The temporal grain was `r settings$grain$grain_time`. As for temporal extent, the temporal grain is a period of time described using the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard, in this case '`r settings$grain$grain_time`', i.e. `r readr::parse_number(settings$grain$grain_time)` `r envTargets::extract_temporal_grain(settings$grain)`.
+
+The taxonomic grain was `r settings$grain$taxonomic`. See the [taxonomy](#taxonomy) section for how this grain was applied.
