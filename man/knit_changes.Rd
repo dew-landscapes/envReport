@@ -5,9 +5,8 @@
 \title{Create markdown text regarding changes to a workflow}
 \usage{
 knit_changes(
-  project = basename(here::here()),
+  project = here::here(),
   include_packages = NULL,
-  add_dots = ".",
   use_units = "years",
   suffix_text =
     "The workflow and associated package(s) are undergoing constant improvement."
@@ -17,10 +16,8 @@ knit_changes(
 \item{project}{Character. Rstudio 'project'}
 
 \item{include_packages}{Character. Any packages to include in the summary
-text}
-
-\item{add_dots}{Character. Usually \code{"."} for interactive use or \code{".."} inside
-a knit.}
+text. Assumes the user has any \code{include_packages} at
+\code{fs::path_abs("..", start = here::here()) |> fs::path("packages", x)}}
 
 \item{use_units}{Character. Passed to the \code{unit} argument of
 \code{lubridate::time_length()}}
