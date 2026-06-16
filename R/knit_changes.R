@@ -4,9 +4,8 @@
 #'
 #' @param project Character. Rstudio 'project'
 #' @param include_packages Character. Any packages to include in the summary
-#' text
-#' @param add_dots Character. Usually `"."` for interactive use or `".."` inside
-#' a knit.
+#' text. Assumes the user has any `include_packages` at
+#' `fs::path_abs("..", start = here::here()) |> fs::path("packages", x)`
 #' @param use_units Character. Passed to the `unit` argument of
 #' `lubridate::time_length()`
 #' @param suffix_text Character. Text to add on to the end of the workflow
@@ -16,37 +15,36 @@
 #' @export
 #'
 #' @examples
-knit_changes <- function(project = basename(here::here())
+knit_changes <- function(project = here::here()
                          , include_packages = NULL
-                         , add_dots = "."
                          , use_units = "years"
                          , suffix_text = "The workflow and associated package(s) are undergoing constant improvement."
                          ) {
 
-  files <- system2("git", args = c("ls-files"), stdout = TRUE) |>
-    length()
+  files <- fs::dir_ls(project
+                      , regexp = "\\.R$|\\.r$|\\.Rmd$|\\.rmd$|\\.yaml$|\\.txt$|\\.csv$"
+                      , recurse = TRUE
+                      )
 
-  lines <- system2("git", args = c("ls-files"), stdout = TRUE) |>
-    tibble::enframe(name = NULL, value = "path") |>
-    dplyr::mutate(path = fs::path(add_dots, path)
-                  , lines = purrr::map_int(path, \(x) length(readLines(x, warn = FALSE)))
-                  ) |>
-    dplyr::pull(lines) |>
+  n_files <- length(files)
+
+  n_lines <- files |>
+    purrr::map_int(\(x) length(readLines(fs::path(x), warn = FALSE))) |>
     sum(na.rm = TRUE)
 
   out_text <- paste0(
     "The customisable workflow for `"
-    , project
+    , basename(project)
     , "` allows for changes to be made over time. For example "
     , nrow(gert::git_log(max = 1e6))
     , " changes have been made to the `"
-    , project
+    , basename(project)
     , "` workflow within the last "
     , round(lubridate::time_length(difftime(Sys.time(), min(gert::git_log(max = 1e6)$time)), unit = use_units), 0)
     , " years. Today the project has "
-    , files
+    , n_files
     , " files and "
-    , format(lines, big.mark = ",")
+    , format(n_lines, big.mark = ",")
     , " lines of code."
     )
 
@@ -55,7 +53,8 @@ knit_changes <- function(project = basename(here::here())
     pac_text <- tibble::tibble(pac = include_packages) |>
       dplyr::mutate(log = purrr::map(pac
                                      , \(x) gert::git_log(max = 1e6
-                                                          , repo = fs::path(add_dots, "..", "packages", x)
+                                                          , repo = fs::path_abs("..", start = here::here()) |>
+                                                            fs::path("packages", x)
                                                           )
                                      )
                     , changes = purrr::map_int(log, nrow)
@@ -75,7 +74,7 @@ knit_changes <- function(project = basename(here::here())
                     )
 
     pac_text <- paste0(
-      "The accompanying package"
+      "Within accompanying package"
       , if(length(include_packages) > 1) "s: " else " "
       , envFunc::vec_to_sentence(pac_text$text, sep  = ";")
       , "."
