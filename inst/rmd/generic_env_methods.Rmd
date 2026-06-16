@@ -10,9 +10,7 @@ Table \@ref(tab:envVariables) lists the source, collection, and layer along with
 
 ```{r envVariables}
 
-df <- env_fine |>
-  dplyr::left_join(envRaster::ras_layers) |>
-  dplyr::left_join(envRaster::ras_source)
+df <- env_df_info
 
 df$source <- kableExtra::cell_spec(df$source, "html", link = df$source_url)
 df$collection <- kableExtra::cell_spec(df$collection, "html", link = df$data_ref)
